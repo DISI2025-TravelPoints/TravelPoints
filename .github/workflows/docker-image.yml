@@ -18,7 +18,7 @@ jobs:
         DOCKER_TOKEN: ${{secrets.DOCKER_TOKEN}}
       run: echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
     - name: Build User Service Docker Image
-      run: docker build -t floareoctavian/userservice ./microserices-parent/user-service/Dockerfile
+      run: docker build -t floareoctavian/userservice ./microservices-parent/user-service/Dockerfile
     - name: Push to DockerHub
       run: docker push floareoctavian/userservice:latest
       
