@@ -19,6 +19,11 @@ jobs:
       run: echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
     - name: Build User Service Docker Image
       run: docker build -t floareoctavian/userservice ./microservices-parent/user-service
+    - name: Build NGINX Docker Image
+      run: docker build -t floareoctavian/travelpoints-nginx ./nginx
+
+    - name: Push NGINX to DockerHub
+      run: docker push floareoctavian/travelpoints-nginx:latest
     - name: Push to DockerHub
       run: docker push floareoctavian/userservice:latest
 

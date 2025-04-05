@@ -14,10 +14,13 @@ jobs:
       - name: Login to docker hub
         run: echo ${{secrets.DOCKER_TOKEN}} | docker login -u ${{secrets.DOCKER_USERNAME}} --password-stdin
       - name: Pull User Service Docker Image from HUB
-        run: sudo docker pull floareoctavian/userservice:latest
+        run: sudo docker pull floareoctavian/userservice:latest & docker pull floareoctavian/travelpoints-nginx:latest
       - name: Delete old docker containers
         run: sudo docker rm -f $(sudo docker ps -a -q) || true
       - name: Run Docker Container
-        run: sudo docker run -d -p 8080:8080 --name user-service floareoctavian/userservice
+        run: sudo docker run -d -p 8080:8080 --name user-service-container --network travelpoints-network floareoctavian/userservice & \
+          docker run -d --name nginx --network travelpoints-network -p 80:80 -v ./nginx/nginx.conf:/etc/nginx/nginx.conf nginx-custom
+
+
     
 
