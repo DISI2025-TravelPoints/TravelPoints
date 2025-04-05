@@ -12,11 +12,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Load .env file
-      uses: goanpeca/setup-envfile@v1
-      with:
-        envfile: .env
     - name: Login Dockerhub
+      env:
+        DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+        DOCKER_TOKEN: ${{secrets.DOCKER_TOKEN}}
       run: docker login -u $DOCKER_USERNAME -p $DOCKER_TOKEN
     - name: Build User Service Docker Image
       run: docker build -t travelpoints/user-service ./microserices-parent/user-service/Dockerfile
