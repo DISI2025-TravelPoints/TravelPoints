@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Login to docker hub
-        run: echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
+        run: echo ${{secrets.DOCKER_TOKEN}} | docker login -u ${{secrets.DOCKER_USERNAME}} --password-stdin
       - name: Pull User Service Docker Image from HUB
         run: sudo docker pull floareoctavian/userservice:latest
       - name: Delete old docker containers
