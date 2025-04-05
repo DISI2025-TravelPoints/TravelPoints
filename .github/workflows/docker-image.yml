@@ -1,0 +1,24 @@
+name: CI Docker 
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Login Dockerhub
+      env:
+        DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+        DOCKER_PASSWORD: ${{secrets.DOCKER_TOKEN}}
+      run: docker login -u $DOCKER_USERNAME -p $DOCKER_TOKEN
+    - name: Build User Service Docker Image
+      run: docker build -t travelpoints/user-service ./microserices-parent/user-service/Dockerfile
+    - name: Push to DockerHub
+      run: docker push travelpoints/user-service:latest
+      
