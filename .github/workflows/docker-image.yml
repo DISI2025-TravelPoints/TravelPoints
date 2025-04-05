@@ -20,7 +20,7 @@ jobs:
     - name: Build User Service Docker Image
       run: docker build -t floareoctavian/userservice ./microservices-parent/user-service
     - name: Build NGINX Docker Image
-      run: docker build -t floareoctavian/travelpoints-nginx ./nginx
+      run: docker build -t floareoctavian/travelpoints-nginx ./microservices-parent/nginx
 
     - name: Push NGINX to DockerHub
       run: docker push floareoctavian/travelpoints-nginx:latest
