@@ -1,0 +1,23 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Docker"]
+    types:
+      - completed
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Login to docker hub
+        run: sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Pull User Service Docker Image from HUB
+        run: sudo docker pull floareoctavian/userservice:latest
+      - name: Delete old docker containers
+        run: sudo docker rm -f $(sudo docker ps -a -q) || true
+      - name: Run Docker Container
+        run: sudo docker run -d -p 8080:8080 --name user-service floareoctavian/userservice
+    
+
