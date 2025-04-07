@@ -1,4 +1,4 @@
-package org.example.user.entity;
+package org.example.userservice.mapper.entity;
 
 import lombok.Getter;
 import lombok.Setter;
