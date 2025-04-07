@@ -13,7 +13,25 @@ services:
       context: ./user-service
       dockerfile: ./Dockerfile
     environment:
-      SPRING_DATASOURCE_URL: database-1.crk4ggmecmeg.eu-central-1.rds.amazonaws.com
+      SPRING_DATASOURCE_URL: jdbc:mysql://database-1.crk4ggmecmeg.eu-central-1.rds.amazonaws.com:3306/user_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: travelpoints
+
+  attraction-service:
+    container_name: attraction-service-container
+    image: attraction-service
+    expose:
+      - "80"
+      - "8080"
+    ports:
+      - "8082:8080"
+    networks:
+      - local-travelpoints-network
+    build:
+      context: ./attraction-service
+      dockerfile: ./Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://database-1.crk4ggmecmeg.eu-central-1.rds.amazonaws.com:3306/attraction_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: travelpoints
 
