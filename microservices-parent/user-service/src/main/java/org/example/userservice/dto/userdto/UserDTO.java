@@ -1,4 +1,4 @@
-package org.example.userservice.mapper.dto.userdto;
+package org.example.userservice.dto.userdto;
 
 import lombok.*;
 

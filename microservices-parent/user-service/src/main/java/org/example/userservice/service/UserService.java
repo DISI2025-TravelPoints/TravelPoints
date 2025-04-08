@@ -1,11 +1,9 @@
 package org.example.userservice.service;
 
-import lombok.RequiredArgsConstructor;
 import org.example.userservice.builder.userbuilder.UserBuilder;
-import org.example.userservice.mapper.dto.userdto.UserDTO;
-import org.example.userservice.mapper.dto.userdto.UserLoginDTO;
-import org.example.userservice.mapper.dto.userdto.UserRegisterDTO;
-import org.example.userservice.mapper.entity.Users;
+import org.example.userservice.dto.userdto.UserLoginDTO;
+import org.example.userservice.dto.userdto.UserRegisterDTO;
+import org.example.userservice.entity.Users;
 import org.example.userservice.errorhandler.UserException;
 import org.example.userservice.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;

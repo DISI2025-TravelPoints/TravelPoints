@@ -1,10 +1,8 @@
 package org.example.userservice.builder.userbuilder;
 
-import lombok.Builder;
-import org.example.userservice.mapper.dto.userdto.UserDTO;
-import org.example.userservice.mapper.dto.userdto.UserRegisterDTO;
-import org.example.userservice.mapper.entity.Users;
-import org.example.userservice.mapper.entity.UserRole;
+import org.example.userservice.dto.userdto.UserRegisterDTO;
+import org.example.userservice.entity.Users;
+import org.example.userservice.entity.UserRole;
 
 import java.time.LocalDateTime;
 

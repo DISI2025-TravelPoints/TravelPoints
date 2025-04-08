@@ -1,8 +1,7 @@
 package org.example.userservice.service;
 
-import org.apache.catalina.User;
-import org.example.userservice.mapper.entity.UserPrincipal;
-import org.example.userservice.mapper.entity.Users;
+import org.example.userservice.entity.UserPrincipal;
+import org.example.userservice.entity.Users;
 import org.example.userservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

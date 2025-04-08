@@ -1,8 +1,7 @@
 package org.example.userservice.controller;
 
-import org.example.userservice.mapper.dto.userdto.UserDTO;
-import org.example.userservice.mapper.dto.userdto.UserLoginDTO;
-import org.example.userservice.mapper.dto.userdto.UserRegisterDTO;
+import org.example.userservice.dto.userdto.UserLoginDTO;
+import org.example.userservice.dto.userdto.UserRegisterDTO;
 import org.example.userservice.errorhandler.UserException;
 import org.example.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package org.example.userservice.mapper.entity;
+package org.example.userservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
