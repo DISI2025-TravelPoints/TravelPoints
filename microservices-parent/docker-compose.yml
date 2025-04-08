@@ -39,7 +39,7 @@ services:
     image: nginx:latest
     container_name: reverse_proxy
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/nginx.local.conf:/etc/nginx/nginx.conf
     ports:
       - "80:80"
     networks:
