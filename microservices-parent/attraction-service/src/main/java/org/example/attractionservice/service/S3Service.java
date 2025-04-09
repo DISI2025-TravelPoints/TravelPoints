@@ -26,7 +26,8 @@ public class S3Service {
 
     public String uploadFile(MultipartFile file) {
         try{
-            String filename = file.getOriginalFilename();
+            String path = "travelpoints_audio_files/";
+            String filename = path + file.getOriginalFilename();
             s3Client.putObject(PutObjectRequest.builder()
                             .bucket(bucketName)
                             .key(filename)
