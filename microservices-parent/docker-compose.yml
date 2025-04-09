@@ -34,7 +34,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://travelpoints.crk4ggmecmeg.eu-central-1.rds.amazonaws.com:3306/attraction_db
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: travelpoints
-
+    env_file:
+      - ../.env
   nginx:
     image: nginx:latest
     container_name: reverse_proxy
