@@ -6,7 +6,7 @@ services:
       - "80"
       - "8080"
     ports:
-      - "8081:8080"
+      - "8081:8081"
     networks:
       - local-travelpoints-network
     build:
@@ -50,4 +50,5 @@ services:
 
 networks:
   local-travelpoints-network:
+    name: local-travelpoints-network
     driver: bridge
