@@ -16,11 +16,12 @@ jobs:
       - name: Pull User Service Docker Image from HUB
         run: sudo docker pull floareoctavian/userservice:latest & sudo docker pull floareoctavian/travelpoints-nginx:latest
       - name: Delete old docker containers
-        run: sudo docker rm -f $(sudo docker ps -a -q) || true
+        run: sudo docker rm -f user-service-container nginx-container attraction-service-container || true
       - name: Run Docker Container
         run: |
           sudo docker run -d -p 8080:8080 --name user-service-container --network travelpoints-network floareoctavian/userservice & 
           sudo docker run -d --name nginx-container --network travelpoints-network -p 80:80 floareoctavian/travelpoints-nginx &
+          sudo docker run -d --name attraction-service-container --network travelpoints-network -p 8081:8080 floareoctavian/attractionservice
           
 
 

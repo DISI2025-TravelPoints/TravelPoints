@@ -24,7 +24,7 @@ public class S3Service {
     @Value("${aws.bucket.name}")
     private String bucketName;
 
-    public String uploadFile(MultipartFile file) {
+    public void uploadFile(MultipartFile file) {
         try{
             String path = "travelpoints_audio_files/";
             String filename = path + file.getOriginalFilename();
@@ -34,7 +34,6 @@ public class S3Service {
                             .build(),
                     software.amazon.awssdk.core.sync.RequestBody.fromBytes(file.getBytes())
             );
-            return "File uploaded successfully: " + filename;
         }
         catch(IOException e){
             throw new RuntimeException("Failed to upload file", e);
