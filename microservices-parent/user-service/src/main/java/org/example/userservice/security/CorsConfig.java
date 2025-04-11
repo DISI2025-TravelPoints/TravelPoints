@@ -12,9 +12,11 @@ public class CorsConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*")); // Permite toate originile
+        //configuration.setAllowedOrigins(Arrays.asList("*")); // Permite toate originile
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("*")); // Permite toate metodele HTTP
         configuration.setAllowedHeaders(Arrays.asList("*")); // Permite toate anteturile
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // Aplica configuratia pentru toate rutele
         return source;
