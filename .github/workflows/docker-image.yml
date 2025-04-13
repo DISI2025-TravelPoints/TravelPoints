@@ -28,7 +28,7 @@ jobs:
     - name: Push User Service to DockerHub
       run: docker push floareoctavian/userservice:latest
     - name: Push Attraction Service to DockerHub
-      run: docker push floareoctavian/userservice:latest
+      run: docker push floareoctavian/attractionservice:latest
 
 
 
