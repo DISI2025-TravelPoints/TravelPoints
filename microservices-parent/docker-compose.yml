@@ -6,7 +6,7 @@ services:
       - "80"
       - "8080"
     ports:
-      - "8081:8081"
+      - "8081:8080"
     networks:
       - local-travelpoints-network
     build:
