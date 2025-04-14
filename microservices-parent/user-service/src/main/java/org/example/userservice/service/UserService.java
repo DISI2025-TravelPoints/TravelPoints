@@ -7,8 +7,10 @@ import org.example.userservice.entity.Users;
 import org.example.userservice.errorhandler.UserException;
 import org.example.userservice.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -49,16 +51,21 @@ public class UserService {
     }
 
     public String login(UserLoginDTO dto) throws UserException {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
-        );
+        Users user = userRepository.findUserByEmail(dto.getEmail())
+                .orElseThrow(() -> new UserException("Email inexistent."));
 
-        if (authentication.isAuthenticated()) {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
+            );
+
             return jwtService.generateToken(dto.getEmail());
-        } else {
-            throw new UserException("Email sau parolă invalidă");
+
+        } catch (BadCredentialsException e) {
+            throw new UserException("Parolă incorectă.");
         }
     }
+
     public String deleteUser(Long id) throws UserException {
         Optional<Users> user = userRepository.findById(id);
         if (user.isEmpty()) {

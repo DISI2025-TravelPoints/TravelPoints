@@ -1,7 +1,5 @@
 package org.example.userservice.dto.userdto;
-
 import lombok.*;
-
 
 @NoArgsConstructor
 @AllArgsConstructor
