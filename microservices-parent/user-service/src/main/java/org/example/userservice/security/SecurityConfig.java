@@ -26,7 +26,6 @@ public class SecurityConfig {
     @Autowired
     private JWTFilter jwtFilter;
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -35,7 +34,6 @@ public class SecurityConfig {
                 .requestMatchers("/api/user/login", "/api/user/register").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("Admin")
                 .requestMatchers("/api/tourist/**").hasRole("Tourist")
-
                 .anyRequest().authenticated());
         http.httpBasic(Customizer.withDefaults());
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

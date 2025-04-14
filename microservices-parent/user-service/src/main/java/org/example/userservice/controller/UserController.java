@@ -29,6 +29,7 @@ public class UserController {
         String jwt = userService.login(loginDTO);
         return ResponseEntity.ok(jwt);
     }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         try {
