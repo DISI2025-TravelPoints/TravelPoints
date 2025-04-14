@@ -4,9 +4,9 @@ services:
     image: user-service
     expose:
       - "80"
-      - "8080"
+      - "8081"
     ports:
-      - "8081:8080"
+      - "8081:8081"
     networks:
       - local-travelpoints-network
     build:
@@ -22,9 +22,9 @@ services:
     image: attraction-service
     expose:
       - "80"
-      - "8080"
+      - "8082"
     ports:
-      - "8082:8080"
+      - "8082:8082"
     networks:
       - local-travelpoints-network
     build:
