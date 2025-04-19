@@ -6,6 +6,7 @@ import org.example.attractionservice.mapper.entity.Attraction;
 import org.example.attractionservice.service.AttractionService;
 import org.example.attractionservice.service.S3Service;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,9 +24,11 @@ public class AttractionController {
         s3Service.uploadFile(file);
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public void createAttraction(@RequestBody AttractionRequest attractionRequest) {
+    public void createAttraction(
+            @RequestPart("attraction") AttractionRequest attractionRequest,
+            @RequestPart("file")MultipartFile file) {
         // upload the file and then get the url
         
     }

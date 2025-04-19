@@ -22,7 +22,7 @@ public class S3Config {
 
     @Bean
     public S3Client s3Client() {
-        System.out.println("Initializing S3Client with accessKey: " + awsAccessKey);
+        // System.out.println("Initializing S3Client with accessKey: " + awsAccessKey);
         return S3Client.builder()
                 .region(Region.EU_CENTRAL_1)
                 .credentialsProvider(StaticCredentialsProvider.create(

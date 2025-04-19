@@ -8,5 +8,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 public class AttractionRequest {
-
+    private String name;
+    private String description;
+    private String entryFee;
+    private Float latitude;
+    private Float longitude;
 }
