@@ -1,7 +1,6 @@
 package org.example.attractionservice.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.example.attractionservice.mapper.dto.AttractionGetRequest;
 import org.example.attractionservice.mapper.dto.AttractionPostRequest;
 import org.example.attractionservice.mapper.entity.AttractionDocument;
@@ -101,53 +100,6 @@ public class AttractionController {
             }
             else return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
-
-    /*
-        FIXME check if the data exists in both databases and then delete it. There might have been errors
-        Deletes an attraction by its id.
-     */
-    @DeleteMapping("/{attractionId}")
-    public ResponseEntity<?> deleteAttractionById(@PathVariable("attractionId") UUID attractionId) {
-//        if(attractionService.deleteAttractionById(attractionId)){
-//            attractionGeoService.deleteLocationById(attractionId);
-//            // I also need to delete the file from S3
-//            return ResponseEntity.ok().build();
-//        }
-//        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        // first check if the entities exist in each repository
-
-        // main db
-        if(attractionService.exists(attractionId)){
-            // mongodb
-            if(attractionGeoService.exists(attractionId)){
-                // s3 bucket
-                String filePath = attractionService.getAttractionById(attractionId).getAudioFilePath();
-                if(s3Service.fileExists(filePath)){
-                    // delete file from bucket
-                    s3Service.deleteFile(filePath);
-                }
-                // delete location data
-                attractionGeoService.deleteLocationById(attractionId);
-            }
-            attractionService.deleteAttractionById(attractionId);
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-
-    }
-
-    @PutMapping(path = "/{attractionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updateAttractionById(
-            @PathVariable("attractionId") UUID attractionId,
-            @RequestPart("attraction") AttractionPostRequest attractionPostRequest,
-            @RequestPart("file")MultipartFile file
-    ){
-        // verify if the file changed
-
-        // update the entity
-
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }

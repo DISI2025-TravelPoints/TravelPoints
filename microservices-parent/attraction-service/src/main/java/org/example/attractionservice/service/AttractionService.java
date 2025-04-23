@@ -8,7 +8,6 @@ import org.example.attractionservice.mapper.entity.Attraction;
 import org.example.attractionservice.repository.AttractionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.sql.Date;
 import java.util.List;
@@ -57,17 +56,5 @@ public class AttractionService {
             return mapAttractionToRequest(attraction);
         }
         return null;
-    }
-
-    public Boolean deleteAttractionById(UUID attractionId) {
-        if (attractionRepository.existsById(attractionId)) {
-            attractionRepository.deleteById(attractionId);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean exists(UUID attractionId) {
-        return attractionRepository.existsById(attractionId);
     }
 }
