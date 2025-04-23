@@ -58,4 +58,16 @@ public class S3Service {
                 .build()).toString();
         return url;
     }
+
+    public Boolean fileExists(MultipartFile file) {
+        try{
+            String path = "travelpoints_audio_files/";
+            String filename = path + file.getOriginalFilename();
+            return true;
+        }
+        catch(Exception e){
+
+        }
+        return false;
+    }
 }

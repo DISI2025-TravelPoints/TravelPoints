@@ -1,6 +1,7 @@
 package org.example.attractionservice.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.example.attractionservice.mapper.dto.AttractionGetRequest;
 import org.example.attractionservice.mapper.dto.AttractionPostRequest;
 import org.example.attractionservice.mapper.entity.AttractionDocument;
@@ -100,6 +101,32 @@ public class AttractionController {
             }
             else return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    /*
+        FIXME check if the data exists in both databases and then delete it. There might have been errors
+        Deletes an attraction by its id.
+     */
+    @DeleteMapping("/{attractionId}")
+    public ResponseEntity<?> deleteAttractionById(@PathVariable("attractionId") UUID attractionId) {
+        if(attractionService.deleteAttractionById(attractionId)){
+            attractionGeoService.deleteLocationById(attractionId);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @PutMapping(path = "/{attractionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateAttractionById(
+            @PathVariable("attractionId") UUID attractionId,
+            @RequestPart("attraction") AttractionPostRequest attractionPostRequest,
+            @RequestPart("file")MultipartFile file
+    ){
+        // verify if the file changed
+
+        // update the entity
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }

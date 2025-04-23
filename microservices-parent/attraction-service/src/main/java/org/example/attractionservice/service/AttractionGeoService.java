@@ -28,4 +28,8 @@ public class AttractionGeoService {
     public AttractionDocument getLocationById(UUID attractionId) {
         return attractionGeoRepository.findById(attractionId).orElse(null);
     }
+
+    public void deleteLocationById(UUID attractionId) {
+        attractionGeoRepository.deleteById(attractionId);
+    }
 }
