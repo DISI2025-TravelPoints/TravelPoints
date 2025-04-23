@@ -110,11 +110,32 @@ public class AttractionController {
      */
     @DeleteMapping("/{attractionId}")
     public ResponseEntity<?> deleteAttractionById(@PathVariable("attractionId") UUID attractionId) {
-        if(attractionService.deleteAttractionById(attractionId)){
-            attractionGeoService.deleteLocationById(attractionId);
+//        if(attractionService.deleteAttractionById(attractionId)){
+//            attractionGeoService.deleteLocationById(attractionId);
+//            // I also need to delete the file from S3
+//            return ResponseEntity.ok().build();
+//        }
+//        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        // first check if the entities exist in each repository
+
+        // main db
+        if(attractionService.exists(attractionId)){
+            // mongodb
+            if(attractionGeoService.exists(attractionId)){
+                // s3 bucket
+                String filePath = attractionService.getAttractionById(attractionId).getAudioFilePath();
+                if(s3Service.fileExists(filePath)){
+                    // delete file from bucket
+                    s3Service.deleteFile(filePath);
+                }
+                // delete location data
+                attractionGeoService.deleteLocationById(attractionId);
+            }
+            attractionService.deleteAttractionById(attractionId);
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
     }
 
     @PutMapping(path = "/{attractionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

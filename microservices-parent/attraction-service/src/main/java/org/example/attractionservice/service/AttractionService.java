@@ -67,4 +67,7 @@ public class AttractionService {
         return false;
     }
 
+    public boolean exists(UUID attractionId) {
+        return attractionRepository.existsById(attractionId);
+    }
 }

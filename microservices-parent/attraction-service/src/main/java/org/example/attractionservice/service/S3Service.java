@@ -59,15 +59,25 @@ public class S3Service {
         return url;
     }
 
-    public Boolean fileExists(MultipartFile file) {
+    public boolean fileExists(String filePath) {
         try{
-            String path = "travelpoints_audio_files/";
-            String filename = path + file.getOriginalFilename();
+            s3Client.headObject(HeadObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(filePath)
+                    .build()
+            );
             return true;
+        }catch(Exception e){
+            return false;
         }
-        catch(Exception e){
+    }
 
-        }
-        return false;
+    public void deleteFile(String filePath) {
+        DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
+                .bucket(bucketName)
+                .key(filePath)
+                .build();
+
+        s3Client.deleteObject(deleteRequest);
     }
 }

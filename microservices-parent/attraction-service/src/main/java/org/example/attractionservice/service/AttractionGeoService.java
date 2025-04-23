@@ -32,4 +32,8 @@ public class AttractionGeoService {
     public void deleteLocationById(UUID attractionId) {
         attractionGeoRepository.deleteById(attractionId);
     }
+
+    public boolean exists(UUID attractionId) {
+        return attractionGeoRepository.existsById(attractionId);
+    }
 }
