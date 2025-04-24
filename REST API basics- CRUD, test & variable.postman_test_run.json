@@ -1,0 +1,115 @@
+{
+	"id": "ae9f5aa2-0e33-4d08-83d2-fcf4aa0365a3",
+	"name": "REST API basics: CRUD, test & variable",
+	"timestamp": "2025-04-24T10:47:50.715Z",
+	"collection_id": "40597815-738385d8-20c7-4cac-a713-f805d3ab5cf3",
+	"folder_id": 0,
+	"environment_id": "0",
+	"totalPass": 3,
+	"delay": 0,
+	"persist": true,
+	"status": "finished",
+	"startedAt": "2025-04-24T10:47:48.875Z",
+	"totalFail": 0,
+	"results": [
+		{
+			"id": "64a6e237-2d60-407c-8488-f52976182fa6",
+			"name": "Post data",
+			"url": "https://postman-rest-api-learner.glitch.me//info",
+			"time": 710,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Successful POST request": true
+			},
+			"testPassFailCounts": {
+				"Successful POST request": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				710
+			],
+			"allTests": [
+				{
+					"Successful POST request": true
+				}
+			]
+		},
+		{
+			"id": "3d830601-8adb-4e46-b58e-e2b478c0f46d",
+			"name": "Update data",
+			"url": "https://postman-rest-api-learner.glitch.me//info?id=1",
+			"time": 178,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Successful PUT request": true
+			},
+			"testPassFailCounts": {
+				"Successful PUT request": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				178
+			],
+			"allTests": [
+				{
+					"Successful PUT request": true
+				}
+			]
+		},
+		{
+			"id": "5f0f81d8-56e0-46b5-9a64-2d73033f9cd6",
+			"name": "Delete data",
+			"url": "https://postman-rest-api-learner.glitch.me//info?id=1",
+			"time": 268,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Successful DELETE request": true
+			},
+			"testPassFailCounts": {
+				"Successful DELETE request": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				268
+			],
+			"allTests": [
+				{
+					"Successful DELETE request": true
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 1156,
+	"collection": {
+		"requests": [
+			{
+				"id": "64a6e237-2d60-407c-8488-f52976182fa6",
+				"method": "POST"
+			},
+			{
+				"id": "3d830601-8adb-4e46-b58e-e2b478c0f46d",
+				"method": "PUT"
+			},
+			{
+				"id": "5f0f81d8-56e0-46b5-9a64-2d73033f9cd6",
+				"method": "DELETE"
+			}
+		]
+	}
+}

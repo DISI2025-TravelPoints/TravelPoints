@@ -24,6 +24,8 @@ public class S3Service {
     @Value("${aws.bucket.name}")
     private String bucketName;
 
+
+
     public void uploadFile(MultipartFile file) {
         try{
             String path = "travelpoints_audio_files/";
@@ -57,4 +59,11 @@ public class S3Service {
                 .build()).toString();
         return url;
     }
+    public void deleteFile(String filePath) {
+        s3Client.deleteObject(DeleteObjectRequest.builder()
+                .bucket(bucketName)
+                .key(filePath)
+                .build());
+    }
+
 }

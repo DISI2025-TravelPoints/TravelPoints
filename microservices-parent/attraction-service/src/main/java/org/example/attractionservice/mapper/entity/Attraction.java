@@ -1,18 +1,17 @@
 package org.example.attractionservice.mapper.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import jakarta.persistence.*;
 
 import java.sql.Date;
 import java.util.UUID;
 
+@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @Entity
-@Table(name="attraction")
+@Table(name = "attraction")
 public class Attraction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
