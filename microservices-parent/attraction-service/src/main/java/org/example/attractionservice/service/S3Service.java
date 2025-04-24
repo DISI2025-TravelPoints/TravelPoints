@@ -80,4 +80,9 @@ public class S3Service {
 
         s3Client.deleteObject(deleteRequest);
     }
+
+    public String updateFile(String filePath, MultipartFile file) {
+        deleteFile(filePath);
+        return uploadFile(file);
+    }
 }

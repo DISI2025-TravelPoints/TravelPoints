@@ -8,10 +8,10 @@ import org.example.attractionservice.mapper.entity.Attraction;
 import org.example.attractionservice.repository.AttractionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -69,5 +69,19 @@ public class AttractionService {
 
     public boolean exists(UUID attractionId) {
         return attractionRepository.existsById(attractionId);
+    }
+
+    public Optional<Attraction> findById(UUID attractionId) {
+        return attractionRepository.findById(attractionId);
+    }
+
+    public void updateAttraction(Attraction existingAttraction, AttractionPostRequest attractionPostRequest, String filePath) {
+        existingAttraction.setName(attractionPostRequest.getName());
+        existingAttraction.setDescription(attractionPostRequest.getDescription());
+        existingAttraction.setEntryFee(attractionPostRequest.getEntryFee());
+        existingAttraction.setLastUpdate(new Date(System.currentTimeMillis()));
+        existingAttraction.setAudioFilePath(filePath);
+
+        attractionRepository.save(existingAttraction);
     }
 }

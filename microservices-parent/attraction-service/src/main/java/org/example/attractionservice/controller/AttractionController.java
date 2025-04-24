@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.example.attractionservice.mapper.dto.AttractionGetRequest;
 import org.example.attractionservice.mapper.dto.AttractionPostRequest;
+import org.example.attractionservice.mapper.entity.Attraction;
 import org.example.attractionservice.mapper.entity.AttractionDocument;
 import org.example.attractionservice.service.AttractionGeoService;
 import org.example.attractionservice.service.AttractionService;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -110,14 +112,6 @@ public class AttractionController {
      */
     @DeleteMapping("/{attractionId}")
     public ResponseEntity<?> deleteAttractionById(@PathVariable("attractionId") UUID attractionId) {
-//        if(attractionService.deleteAttractionById(attractionId)){
-//            attractionGeoService.deleteLocationById(attractionId);
-//            // I also need to delete the file from S3
-//            return ResponseEntity.ok().build();
-//        }
-//        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        // first check if the entities exist in each repository
-
         // main db
         if(attractionService.exists(attractionId)){
             // mongodb
@@ -144,10 +138,22 @@ public class AttractionController {
             @RequestPart("attraction") AttractionPostRequest attractionPostRequest,
             @RequestPart("file")MultipartFile file
     ){
-        // verify if the file changed
+        Optional<Attraction> optionalAttraction = attractionService.findById(attractionId);
+        if (optionalAttraction.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Attraction not found.");
+        }
 
-        // update the entity
+        Attraction existingAttraction = optionalAttraction.get();
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        // check if the file has the same name as the one in the bucket
+        String oldFilePath = existingAttraction.getAudioFilePath();
+        String fileName = file.getName();
+        if(!oldFilePath.split("/")[1].equals(fileName)){
+            // then set the new file
+            fileName = s3Service.updateFile(oldFilePath, file); // returns the full path to the file; reused existing var
+        }
+        attractionService.updateAttraction(existingAttraction, attractionPostRequest, fileName);
+        attractionGeoService.updateLocation(existingAttraction.getId(), attractionPostRequest);
+        return ResponseEntity.ok().build();
     }
 }
