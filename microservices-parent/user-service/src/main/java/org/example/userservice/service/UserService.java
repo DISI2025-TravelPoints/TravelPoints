@@ -6,6 +6,7 @@ import org.example.userservice.dto.userdto.UserRegisterDTO;
 import org.example.userservice.entity.Users;
 import org.example.userservice.errorhandler.UserException;
 import org.example.userservice.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,7 +14,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.UUID;
 
+
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -24,6 +28,9 @@ public class UserService {
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder encoder ;
+
+    @Autowired
+    private EmailService emailService;
 
     public UserService(UserRepository userRepository, JWTService jwtService, AuthenticationManager authenticationManager, BCryptPasswordEncoder encoder) {
         this.userRepository = userRepository;
@@ -74,6 +81,56 @@ public class UserService {
 
         userRepository.deleteById(id);
         return "Utilizator șters cu succes.";
+    }
+
+    //pass-rest methods --------------------------------------------------------------
+
+    public void initiatePasswordReset(String email) {
+        System.out.println("Attempting to initiate password reset for email: " + email);
+
+        Users user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User with given email not found"));
+
+        System.out.println("User found for email: " + email);
+
+        String token = UUID.randomUUID().toString();
+        LocalDateTime expiryDate = LocalDateTime.now().plusHours(1); // token valid 1h
+        user.setPasswordResetToken(token);
+        user.setTokenExpiryDate(expiryDate);
+
+        System.out.println("Generated token: " + token);
+
+        try {
+            userRepository.save(user);
+            System.out.println("Saved user with reset token to the database.");
+
+            emailService.sendPasswordResetEmail(user.getEmail(), token);
+            System.out.println("Reset email sent to: " + email);
+
+        } catch(Exception e) {
+            System.err.println("Error during password reset initiation: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void validatePasswordResetToken(String token) {
+        Users user = userRepository.findByPasswordResetToken(token)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid or expired password reset token"));
+
+        if (LocalDateTime.now().isAfter(user.getTokenExpiryDate())) {
+            throw new IllegalArgumentException("Invalid or expired password reset token");
+        }
+    }
+
+    public void resetPassword(String token, String newPassword) {
+        validatePasswordResetToken(token);
+        Users user = userRepository.findByPasswordResetToken(token)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid token"));
+
+        user.setPassword(encoder.encode(newPassword));
+        user.setPasswordResetToken(null);
+        user.setTokenExpiryDate(null);
+        userRepository.save(user);
     }
 
 }

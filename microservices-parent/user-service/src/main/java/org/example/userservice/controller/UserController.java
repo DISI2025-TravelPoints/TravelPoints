@@ -1,7 +1,9 @@
 package org.example.userservice.controller;
 
+import org.example.userservice.dto.userdto.PasswordResetDTO;
 import org.example.userservice.dto.userdto.UserLoginDTO;
 import org.example.userservice.dto.userdto.UserRegisterDTO;
+import org.example.userservice.dto.userdto.EmailDTO;
 import org.example.userservice.errorhandler.UserException;
 import org.example.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,37 @@ public class UserController {
     @RequestMapping("/")
     public String hello() {
         return "hello";
+    }
+
+    @PostMapping("/initiate-password-reset")
+    public ResponseEntity<String> initiatePasswordReset(@RequestBody EmailDTO emailDto) {
+        try {
+            userService.initiatePasswordReset(emailDto.getEmail());
+            return ResponseEntity.ok("Password reset link sent to your email.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+    @GetMapping("/validate-password-reset-token")
+    public ResponseEntity<String> validatePasswordResetToken(@RequestParam String token) {
+        try {
+            userService.validatePasswordResetToken(token);
+            return ResponseEntity.ok("Token is valid.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody PasswordResetDTO dto) {
+        try {
+            userService.resetPassword(dto.getToken(), dto.getNewPassword());
+            return ResponseEntity.ok("Password has been reset successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 
