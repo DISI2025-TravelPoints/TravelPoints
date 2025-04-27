@@ -94,7 +94,7 @@ public class UserService {
         System.out.println("User found for email: " + email);
 
         String token = UUID.randomUUID().toString();
-        LocalDateTime expiryDate = LocalDateTime.now().plusHours(1); // token valid 1h
+        LocalDateTime expiryDate = LocalDateTime.now().plusMinutes(10); // token valid 10 min
         user.setPasswordResetToken(token);
         user.setTokenExpiryDate(expiryDate);
 
