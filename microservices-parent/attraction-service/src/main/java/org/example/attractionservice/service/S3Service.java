@@ -24,7 +24,7 @@ public class S3Service {
     @Value("${aws.bucket.name}")
     private String bucketName;
 
-    public void uploadFile(MultipartFile file) {
+    public String uploadFile(MultipartFile file) {
         try{
             String path = "travelpoints_audio_files/";
             String filename = path + file.getOriginalFilename();
@@ -34,6 +34,7 @@ public class S3Service {
                             .build(),
                     software.amazon.awssdk.core.sync.RequestBody.fromBytes(file.getBytes())
             );
+            return filename;
         }
         catch(IOException e){
             throw new RuntimeException("Failed to upload file", e);
@@ -56,5 +57,32 @@ public class S3Service {
                 .key(fileName)
                 .build()).toString();
         return url;
+    }
+
+    public boolean fileExists(String filePath) {
+        try{
+            s3Client.headObject(HeadObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(filePath)
+                    .build()
+            );
+            return true;
+        }catch(Exception e){
+            return false;
+        }
+    }
+
+    public void deleteFile(String filePath) {
+        DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
+                .bucket(bucketName)
+                .key(filePath)
+                .build();
+
+        s3Client.deleteObject(deleteRequest);
+    }
+
+    public String updateFile(String filePath, MultipartFile file) {
+        deleteFile(filePath);
+        return uploadFile(file);
     }
 }

@@ -1,28 +1,24 @@
-package org.example.attractionservice.mapper.entity;
+package org.example.attractionservice.mapper.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import jakarta.persistence.*;
 
 import java.sql.Date;
 import java.util.UUID;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@Entity
 @Builder
-@Table(name="attraction")
-public class Attraction {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public class AttractionGetRequest {
     private UUID id;
-
     private String name;
     private String description;
     private Float entryFee;
     private String audioFilePath;
+    private Double longitude;
+    private Double latitude;
     private Date lastUpdate;
 }
