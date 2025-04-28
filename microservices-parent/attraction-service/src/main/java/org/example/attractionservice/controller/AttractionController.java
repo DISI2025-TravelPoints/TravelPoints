@@ -135,24 +135,26 @@ public class AttractionController {
     public ResponseEntity<?> updateAttractionById(
             @PathVariable("attractionId") UUID attractionId,
             @RequestPart("attraction") AttractionPostRequest attractionPostRequest,
-            @RequestPart("file")MultipartFile file
-    ){
+            @RequestPart("file") MultipartFile file
+    ) {
         Optional<Attraction> optionalAttraction = attractionService.findById(attractionId);
         if (optionalAttraction.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Attraction not found.");
         }
 
         Attraction existingAttraction = optionalAttraction.get();
+        String filePath = existingAttraction.getAudioFilePath();
 
-        // check if the file has the same name as the one in the bucket
-        String oldFilePath = existingAttraction.getAudioFilePath();
-        String fileName = file.getName();
-        if(!oldFilePath.split("/")[1].equals(fileName)){
-            // then set the new file
-            fileName = s3Service.updateFile(oldFilePath, file); // returns the full path to the file; reused existing var
+        if (!file.isEmpty()) { // if not empty -> real uploaded file
+            String uploadedFileName = file.getOriginalFilename();
+            if (uploadedFileName != null && !filePath.split("/")[1].equals(uploadedFileName)) {
+                filePath = s3Service.updateFile(filePath, file);
+            }
         }
-        attractionService.updateAttraction(existingAttraction, attractionPostRequest, fileName);
+
+        attractionService.updateAttraction(existingAttraction, attractionPostRequest, filePath);
         attractionGeoService.updateLocation(existingAttraction.getId(), attractionPostRequest);
+
         return ResponseEntity.ok().build();
     }
 }
