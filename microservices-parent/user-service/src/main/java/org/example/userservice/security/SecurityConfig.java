@@ -28,18 +28,24 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http.csrf(customizer -> customizer.disable());
+        http.cors(Customizer.withDefaults());
         http.authorizeHttpRequests(request -> request
-                .requestMatchers("/api/user/login", "/api/user/register").permitAll()
+                .requestMatchers(
+                        "/api/user/login",
+                        "/api/user/register",
+                        "/api/user/initiate-password-reset",
+                        "/api/user/reset-password",
+                        "/api/user/validate-password-reset-token"
+                ).permitAll()
                 .requestMatchers("/api/admin/**").hasRole("Admin")
                 .requestMatchers("/api/tourist/**").hasRole("Tourist")
-                .anyRequest().authenticated());
+                .anyRequest().authenticated()
+        );
         http.httpBasic(Customizer.withDefaults());
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.addFilterBefore(jwtFilter , UsernamePasswordAuthenticationFilter.class);
         return http.build();
-
     }
     @Bean
     public AuthenticationProvider authenticationProvider(){
