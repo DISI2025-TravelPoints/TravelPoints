@@ -13,4 +13,5 @@ import java.util.UUID;
 
 @Repository
 public interface AttractionGeoRepository extends MongoRepository<AttractionDocument, UUID> {
+    List<AttractionDocument> findByGeohashStartingWith(String geohashPrefix);
 }
