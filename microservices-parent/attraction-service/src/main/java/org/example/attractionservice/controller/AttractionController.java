@@ -156,4 +156,36 @@ public class AttractionController {
         attractionGeoService.updateLocation(existingAttraction.getId(), attractionPostRequest);
         return ResponseEntity.ok().build();
     }
+
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchAttractions(@RequestParam("keyword") String keyword) {
+        List<AttractionGetRequest> attractions = attractionService.searchAttractions(keyword);
+
+        if (attractions.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No attractions found for your search.");
+        }
+        return ResponseEntity.ok(attractions);
+    }
+
+
+    @GetMapping("/search/location")
+    public ResponseEntity<?> searchAttractionsByLocation(
+            @RequestParam("latitude") double latitude,
+            @RequestParam("longitude") double longitude) {
+
+        double radiusKm = 10.0; // implicit 10 km
+
+        List<AttractionDocument> nearbyAttractions = attractionGeoService.findNearbyAttractions(latitude, longitude, radiusKm);
+
+        if (nearbyAttractions.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No attractions found near this location.");
+        }
+        return ResponseEntity.ok(nearbyAttractions);
+    }
+
+
+
+
+
 }
