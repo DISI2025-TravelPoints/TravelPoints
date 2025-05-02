@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/attraction")
 @RequiredArgsConstructor
+@CrossOrigin
 public class AttractionController {
     private static final Logger log = LoggerFactory.getLogger(AttractionController.class);
     private final AttractionService attractionService;
@@ -135,26 +136,24 @@ public class AttractionController {
     public ResponseEntity<?> updateAttractionById(
             @PathVariable("attractionId") UUID attractionId,
             @RequestPart("attraction") AttractionPostRequest attractionPostRequest,
-            @RequestPart("file") MultipartFile file
-    ) {
+            @RequestPart("file")MultipartFile file
+    ){
         Optional<Attraction> optionalAttraction = attractionService.findById(attractionId);
         if (optionalAttraction.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Attraction not found.");
         }
 
         Attraction existingAttraction = optionalAttraction.get();
-        String filePath = existingAttraction.getAudioFilePath();
 
-        if (!file.isEmpty()) { // if not empty -> real uploaded file
-            String uploadedFileName = file.getOriginalFilename();
-            if (uploadedFileName != null && !filePath.split("/")[1].equals(uploadedFileName)) {
-                filePath = s3Service.updateFile(filePath, file);
-            }
+        // check if the file has the same name as the one in the bucket
+        String oldFilePath = existingAttraction.getAudioFilePath();
+        String fileName = file.getName();
+        if(!oldFilePath.split("/")[1].equals(fileName)){
+            // then set the new file
+            fileName = s3Service.updateFile(oldFilePath, file); // returns the full path to the file; reused existing var
         }
-
-        attractionService.updateAttraction(existingAttraction, attractionPostRequest, filePath);
+        attractionService.updateAttraction(existingAttraction, attractionPostRequest, fileName);
         attractionGeoService.updateLocation(existingAttraction.getId(), attractionPostRequest);
-
         return ResponseEntity.ok().build();
     }
 
@@ -165,4 +164,35 @@ public class AttractionController {
                 .filter(attraction -> nearbyAttractions.contains(attraction.getId()))
                 .collect(Collectors.toList());
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchAttractions(@RequestParam("keyword") String keyword) {
+        List<AttractionGetRequest> attractions = attractionService.searchAttractions(keyword);
+
+        if (attractions.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No attractions found for your search.");
+        }
+        return ResponseEntity.ok(attractions);
+    }
+
+
+    @GetMapping("/search/location")
+    public ResponseEntity<?> searchAttractionsByLocation(
+            @RequestParam("latitude") double latitude,
+            @RequestParam("longitude") double longitude) {
+
+        double radiusKm = 10.0; // implicit 10 km
+
+        List<AttractionDocument> nearbyAttractions = attractionGeoService.findNearbyAttractions(latitude, longitude, radiusKm);
+
+        if (nearbyAttractions.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No attractions found near this location.");
+        }
+        return ResponseEntity.ok(nearbyAttractions);
+    }
+
+
+
+
+
 }

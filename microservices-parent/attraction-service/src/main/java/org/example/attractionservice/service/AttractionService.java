@@ -84,4 +84,18 @@ public class AttractionService {
 
         attractionRepository.save(existingAttraction);
     }
+
+
+    public List<AttractionGetRequest> searchAttractions(String keyword) {
+        List<Attraction> attractions = attractionRepository.findAll();
+
+        // Căutare pentru cuvântul cheie (parțial) în nume sau descriere
+        return attractions.stream()
+                .filter(attraction -> attraction.getName().toLowerCase().contains(keyword.toLowerCase()) ||
+                        attraction.getDescription().toLowerCase().contains(keyword.toLowerCase()))
+                .map(this::mapAttractionToRequest)
+                .collect(Collectors.toList());
+    }
+
+
 }

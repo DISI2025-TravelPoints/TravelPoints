@@ -7,6 +7,9 @@ import org.example.attractionservice.mapper.dto.AttractionPostRequest;
 import org.example.attractionservice.mapper.entity.AttractionDocument;
 import org.example.attractionservice.repository.AttractionGeoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Metrics;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Service;
 
@@ -62,4 +65,9 @@ public class AttractionGeoService {
         return attractionGeoRepository.findByGeohashStartingWith(geohashPrefix);
     }
 
+    public List<AttractionDocument> findNearbyAttractions(double latitude, double longitude, double radiusKm) {
+        Point point = new Point(longitude, latitude);
+        Distance distance = new Distance(radiusKm, Metrics.KILOMETERS);
+        return attractionGeoRepository.findByLocationNear(point, distance);
+    }
 }
