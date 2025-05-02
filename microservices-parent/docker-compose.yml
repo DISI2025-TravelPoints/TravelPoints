@@ -11,7 +11,7 @@ services:
       - local-travelpoints-network
     build:
       context: user-service
-      dockerfile: microservices-parent/user-service/Dockerfile
+      dockerfile: ./Dockerfile
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://travelpoints.crk4ggmecmeg.eu-central-1.rds.amazonaws.com:3306/user_db
       SPRING_DATASOURCE_USERNAME: admin
@@ -29,7 +29,7 @@ services:
       - local-travelpoints-network
     build:
       context: attraction-service
-      dockerfile: microservices-parent/attraction-service/Dockerfile
+      dockerfile: ./Dockerfile
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://travelpoints.crk4ggmecmeg.eu-central-1.rds.amazonaws.com:3306/attraction_db
       SPRING_DATASOURCE_USERNAME: admin
