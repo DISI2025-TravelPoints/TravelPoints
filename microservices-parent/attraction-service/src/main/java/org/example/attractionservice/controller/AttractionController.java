@@ -157,4 +157,12 @@ public class AttractionController {
 
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/nearby")
+    public List<AttractionGetRequest> getNearbyAttractions(@RequestBody String geohash){
+        List<AttractionDocument> nearbyAttractions = attractionGeoService.getNearbyAttractions(geohash.substring(0, 5));
+        return attractionService.getAllAttractions().stream()
+                .filter(attraction -> nearbyAttractions.contains(attraction.getId()))
+                .collect(Collectors.toList());
+    }
 }

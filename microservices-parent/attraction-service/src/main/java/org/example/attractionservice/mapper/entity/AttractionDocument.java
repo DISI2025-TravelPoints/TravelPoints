@@ -20,4 +20,6 @@ public class AttractionDocument {
     private UUID id;
     @Field("location")
     private GeoJsonPoint location;
+    @Field("geohash")
+    private String geohash;
 }
