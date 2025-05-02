@@ -3,6 +3,8 @@ package org.example.userservice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name="Users")
 @NoArgsConstructor
@@ -42,6 +44,12 @@ public class Users {
     )
     private UserRole role;
 
+    @Column(name = "password_reset_token")
+    private String passwordResetToken;
+
+    @Column(name = "token_expiry_date")
+    private LocalDateTime tokenExpiryDate;
+
     public Long getId() {
         return id;
     }
@@ -80,5 +88,21 @@ public class Users {
 
     public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    public String getPasswordResetToken() {
+        return passwordResetToken;
+    }
+
+    public LocalDateTime getTokenExpiryDate() {
+        return tokenExpiryDate;
+    }
+
+    public void setPasswordResetToken(String passwordResetToken) {
+        this.passwordResetToken = passwordResetToken;
+    }
+
+    public void setTokenExpiryDate(LocalDateTime tokenExpiryDate) {
+        this.tokenExpiryDate = tokenExpiryDate;
     }
 }

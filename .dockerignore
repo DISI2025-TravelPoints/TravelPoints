@@ -1,0 +1,22 @@
+# Maven/Gradle build output
+target
+build
+
+# IDE/editor configs
+*.iml
+.idea
+.vscode
+*.sw?
+*.bak
+*.tmp
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Git and version control
+.git
+.gitignore
+
+# Logs
+*.log
