@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/attraction")
 @RequiredArgsConstructor
-@CrossOrigin
+//@CrossOrigin
 public class AttractionController {
     private static final Logger log = LoggerFactory.getLogger(AttractionController.class);
     private final AttractionService attractionService;
