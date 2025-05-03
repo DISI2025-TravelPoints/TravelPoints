@@ -35,6 +35,12 @@ public class JWTFilter extends OncePerRequestFilter{
         if(authHeader != null && authHeader.startsWith("Bearer ")){
             token = authHeader.substring(7);
             username = jwtService.extractEmail(token);
+            // Verificare blacklist-----
+            TokenBlacklistService blacklistService = context.getBean(TokenBlacklistService.class);
+            if (blacklistService.isBlacklisted(token)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return; // nu permite accesul-----
+            }
         }
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = context.getBean(MyUserDetailsService.class).loadUserByUsername(username);

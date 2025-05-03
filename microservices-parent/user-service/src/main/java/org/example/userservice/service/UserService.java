@@ -6,7 +6,9 @@ import org.example.userservice.dto.userdto.UserRegisterDTO;
 import org.example.userservice.entity.Users;
 import org.example.userservice.errorhandler.UserException;
 import org.example.userservice.repository.UserRepository;
+import org.example.userservice.security.TokenBlacklistService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,6 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+
 import java.util.UUID;
 
 
@@ -28,7 +33,8 @@ public class UserService {
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder encoder ;
-
+    @Autowired
+    private  TokenBlacklistService tokenBlacklistService;
     @Autowired
     private EmailService emailService;
 
@@ -71,6 +77,17 @@ public class UserService {
         } catch (BadCredentialsException e) {
             throw new UserException("Parolă incorectă.");
         }
+    }
+
+    public String logout(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return "Missing or invalid token.";
+        }
+
+        String token = authHeader.replace("Bearer ", "");
+        tokenBlacklistService.blacklistToken(token);
+
+        return "User successfully logged out.";
     }
 
     public String deleteUser(Long id) throws UserException {

@@ -32,6 +32,23 @@ public class UserController {
         return ResponseEntity.ok(jwt);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        String message = userService.logout(authHeader);
+
+        if (message.equals("Missing or invalid token.")) {
+            return ResponseEntity.badRequest().body(message);
+        }
+
+        return ResponseEntity.ok(message);
+    }
+
+    @GetMapping("/protected-test")
+    public ResponseEntity<String> protectedTest() {
+        return ResponseEntity.ok("Access granted: your token is valid and not blacklisted.");
+    }
+
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         try {
