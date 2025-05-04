@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RestController
@@ -173,7 +174,8 @@ public class AttractionController {
         if (attractions.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No attractions found for your search.");
         }
-        return ResponseEntity.ok(attractions);
+        // map attraction ids to geolocation ids to set the latitude and longitude
+        return ResponseEntity.ok(attractionGeoService.mapLocationToAttraction(attractions));
     }
 
 
@@ -188,14 +190,14 @@ public class AttractionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("No attractions found near this location.");
         }
+//        NearbyAttractionsResponse response = NearbyAttractionsResponse.builder()
+//                .latitude(latitude)
+//                .longitude(longitude)
+//                .attractions(nearbyAttractions)
+//                .build();
 
-        NearbyAttractionsResponse response = NearbyAttractionsResponse.builder()
-                .latitude(latitude)
-                .longitude(longitude)
-                .attractions(nearbyAttractions)
-                .build();
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(attractionService.mapAttractionToLocation(nearbyAttractions));
     }
 
 
