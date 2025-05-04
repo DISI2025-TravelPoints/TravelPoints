@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.example.attractionservice.mapper.dto.AttractionGetRequest;
 import org.example.attractionservice.mapper.dto.AttractionPostRequest;
+import org.example.attractionservice.mapper.dto.NearbyAttractionsResponse;
 import org.example.attractionservice.mapper.entity.Attraction;
 import org.example.attractionservice.mapper.entity.AttractionDocument;
 import org.example.attractionservice.service.AttractionGeoService;
@@ -181,15 +182,22 @@ public class AttractionController {
             @RequestParam("latitude") double latitude,
             @RequestParam("longitude") double longitude) {
 
-        double radiusKm = 10.0; // implicit 10 km
-
-        List<AttractionDocument> nearbyAttractions = attractionGeoService.findNearbyAttractions(latitude, longitude, radiusKm);
-
+        // Nu mai setezi radiusKm aici!
+        List<AttractionGetRequest> nearbyAttractions = attractionGeoService.findNearbyAttractions(latitude, longitude);
         if (nearbyAttractions.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No attractions found near this location.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No attractions found near this location.");
         }
-        return ResponseEntity.ok(nearbyAttractions);
+
+        NearbyAttractionsResponse response = NearbyAttractionsResponse.builder()
+                .latitude(latitude)
+                .longitude(longitude)
+                .attractions(nearbyAttractions)
+                .build();
+
+        return ResponseEntity.ok(response);
     }
+
 
 
 
