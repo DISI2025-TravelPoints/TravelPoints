@@ -3,9 +3,12 @@ package org.example.attractionservice.service;
 import ch.hsr.geohash.GeoHash;
 import com.jayway.jsonpath.Criteria;
 import lombok.AllArgsConstructor;
+import org.example.attractionservice.mapper.dto.AttractionGetRequest;
 import org.example.attractionservice.mapper.dto.AttractionPostRequest;
+import org.example.attractionservice.mapper.entity.Attraction;
 import org.example.attractionservice.mapper.entity.AttractionDocument;
 import org.example.attractionservice.repository.AttractionGeoRepository;
+import org.example.attractionservice.repository.AttractionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
@@ -14,14 +17,15 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Service;
 
 import javax.management.Query;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class AttractionGeoService {
     private final AttractionGeoRepository attractionGeoRepository;
-
+    private final AttractionRepository attractionRepository;
 
     public void saveLocation(UUID attractionId, Double latitude, Double longitude) {
         GeoJsonPoint location = new GeoJsonPoint(longitude, latitude);
@@ -65,9 +69,60 @@ public class AttractionGeoService {
         return attractionGeoRepository.findByGeohashStartingWith(geohashPrefix);
     }
 
-    public List<AttractionDocument> findNearbyAttractions(double latitude, double longitude, double radiusKm) {
+    private AttractionGetRequest mapAttractionToRequest(AttractionDocument geolocation){
+        return AttractionGetRequest.builder()
+                .id(geolocation.getId())
+                .latitude(geolocation.getLatitude())
+                .longitude(geolocation.getLongitude())
+                .build();
+    }
+
+    public List<AttractionGetRequest> findNearbyAttractions(double latitude, double longitude) {
+        double radiusKm = 10.0;
+
         Point point = new Point(longitude, latitude);
         Distance distance = new Distance(radiusKm, Metrics.KILOMETERS);
-        return attractionGeoRepository.findByLocationNear(point, distance);
+
+        List<AttractionDocument> documents = attractionGeoRepository.findByLocationNear(point, distance);
+        return documents.stream()
+                .map(this::mapAttractionToRequest)
+                .collect(Collectors.toList()); //returns only the geolocation data
+//        return documents.stream()
+//                .map(doc -> {
+//                    Optional<Attraction> optionalAttraction = attractionRepository.findById(doc.getId());
+//                    if (optionalAttraction.isEmpty()) return null;
+//
+//                    Attraction attraction = optionalAttraction.get();
+//
+//                    return AttractionGetRequest.builder()
+//                            .id(attraction.getId())
+//                            .name(attraction.getName())
+//                            .description(attraction.getDescription())
+//                            .entryFee(attraction.getEntryFee())
+//                            .audioFilePath(attraction.getAudioFilePath())
+//                            .lastUpdate(attraction.getLastUpdate())
+//                            .latitude(doc.getLocation().getY())
+//                            .longitude(doc.getLocation().getX())
+//                            .build();
+//                })
+//                .filter(Objects::nonNull)
+//                .toList();
     }
+
+    public List<AttractionGetRequest> mapLocationToAttraction(List<AttractionGetRequest> attractions){
+        List<AttractionDocument> geoLocationAttractions = getAllLocations();
+        Map<UUID, AttractionDocument> geoMap = geoLocationAttractions.stream()
+                .collect(Collectors.toMap(AttractionDocument::getId, Function.identity()));
+
+        return attractions.stream()
+                .peek(attraction -> {
+                    AttractionDocument geo = geoMap.get(attraction.getId());
+                    if (geo != null) {
+                        attraction.setLatitude(geo.getLatitude());
+                        attraction.setLongitude(geo.getLongitude());
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
 }

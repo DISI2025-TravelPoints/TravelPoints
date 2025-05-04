@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,7 +52,6 @@ public class AttractionService {
                 .build();
     }
 
-
     public AttractionGetRequest getAttractionById(UUID attractionId) {
         Attraction attraction = attractionRepository.findById(attractionId).orElse(null);
         if(attraction != null){
@@ -85,7 +86,6 @@ public class AttractionService {
         attractionRepository.save(existingAttraction);
     }
 
-
     public List<AttractionGetRequest> searchAttractions(String keyword) {
         List<Attraction> attractions = attractionRepository.findAll();
 
@@ -97,5 +97,23 @@ public class AttractionService {
                 .collect(Collectors.toList());
     }
 
+    public List<AttractionGetRequest> mapAttractionToLocation(List<AttractionGetRequest> geolocations){
+        List<Attraction> attractions = attractionRepository.findAll();
+        Map<UUID, Attraction> attractionMap = attractions.stream()
+                .collect(Collectors.toMap(Attraction::getId, Function.identity()));
+
+        return geolocations.stream()
+                .peek(geolocation -> {
+                    Attraction attraction = attractionMap.get(geolocation.getId());
+                    if (attraction != null) {
+                        geolocation.setName(attraction.getName());
+                        geolocation.setDescription(attraction.getDescription());
+                        geolocation.setEntryFee(attraction.getEntryFee());
+                        geolocation.setLastUpdate(attraction.getLastUpdate());
+                        geolocation.setAudioFilePath(attraction.getAudioFilePath());
+                    }
+                })
+                .collect(Collectors.toList());
+    }
 
 }
