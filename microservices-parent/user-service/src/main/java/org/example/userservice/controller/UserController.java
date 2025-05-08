@@ -20,6 +20,14 @@ public class UserController {
         this.userService = userService;
     }
 
+
+    @GetMapping("/id-by-email")
+    public ResponseEntity<Long> getUserIdByEmail(@RequestParam String email) {
+        Long userId = userService.getUserIdByEmail(email);
+        return ResponseEntity.ok(userId);
+    }
+
+
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody UserRegisterDTO userDTO) throws UserException {
         String message = userService.registerUser(userDTO);

@@ -45,6 +45,12 @@ public class UserService {
         this.encoder = encoder;
     }
 
+    public Long getUserIdByEmail(String email) {
+        Users user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+        return user.getId();
+    }
+
     public String registerUser(UserRegisterDTO dto) throws UserException {
         if (!emailPattern.matcher(dto.getEmail()).matches()) {
             throw new UserException("Emailul nu este valid: " + dto.getEmail());
