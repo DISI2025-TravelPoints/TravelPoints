@@ -190,12 +190,12 @@ public class AttractionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("No attractions found near this location.");
         }
+
 //        NearbyAttractionsResponse response = NearbyAttractionsResponse.builder()
 //                .latitude(latitude)
 //                .longitude(longitude)
 //                .attractions(nearbyAttractions)
 //                .build();
-
 
         return ResponseEntity.ok(attractionService.mapAttractionToLocation(nearbyAttractions));
     }

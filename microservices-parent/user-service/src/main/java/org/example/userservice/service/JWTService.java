@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import org.example.userservice.entity.Users;
 import org.example.userservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -22,20 +23,15 @@ import java.util.function.Function;
 
 @Service
 public class JWTService {
-    private String secretKey = "";
+    @Value("${jwt.secret}")
+    private String secretKey;
 
     private final UserRepository userRepository;
+
 
     @Autowired
     public JWTService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        try {
-            KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
-            SecretKey sk = keyGen.generateKey();
-            secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public String generateToken(String email) {
@@ -44,7 +40,7 @@ public class JWTService {
         Users user = userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found for JWT"));
 
-        claims.put("role", user.getRole().name()); // trimit rolul ca string
+        claims.put("role", user.getRole().name());
 
         return Jwts.builder()
                 .setClaims(claims)

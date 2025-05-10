@@ -17,6 +17,24 @@ services:
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: travelpoints
 
+  review-service:
+    container_name: reviews-service-container
+    image: review-service
+    expose:
+      - "80"
+      - "8083"
+    ports:
+      - "8083:8083"
+    networks:
+      - local-travelpoints-network
+    build:
+      context: review-service
+      dockerfile: ./Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://travelpoints.crk4ggmecmeg.eu-central-1.rds.amazonaws.com:3306/review_db
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: travelpoints
+
   attraction-service:
     container_name: attraction-service-container
     image: attraction-service
