@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RestController
@@ -159,7 +160,7 @@ public class AttractionController {
     }
 
     @GetMapping("/nearby/{geohash}")
-    public List<AttractionGetRequest> getNearbyAttractions(@RequestParam String geohash){
+    public List<AttractionGetRequest> getNearbyAttractions(@PathVariable String geohash){
         List<AttractionDocument> nearbyAttractions = attractionGeoService.getNearbyAttractions(geohash.substring(0, 5));
         return attractionService.getAllAttractions().stream()
                 .filter(attraction -> nearbyAttractions.contains(attraction.getId()))
@@ -173,7 +174,8 @@ public class AttractionController {
         if (attractions.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No attractions found for your search.");
         }
-        return ResponseEntity.ok(attractions);
+        // map attraction ids to geolocation ids to set the latitude and longitude
+        return ResponseEntity.ok(attractionGeoService.mapLocationToAttraction(attractions));
     }
 
 
@@ -189,13 +191,13 @@ public class AttractionController {
                     .body("No attractions found near this location.");
         }
 
-        NearbyAttractionsResponse response = NearbyAttractionsResponse.builder()
-                .latitude(latitude)
-                .longitude(longitude)
-                .attractions(nearbyAttractions)
-                .build();
+//        NearbyAttractionsResponse response = NearbyAttractionsResponse.builder()
+//                .latitude(latitude)
+//                .longitude(longitude)
+//                .attractions(nearbyAttractions)
+//                .build();
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(attractionService.mapAttractionToLocation(nearbyAttractions));
     }
 
 

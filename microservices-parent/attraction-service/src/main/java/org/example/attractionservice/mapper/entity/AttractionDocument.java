@@ -3,6 +3,7 @@ package org.example.attractionservice.mapper.entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Getter
 public class AttractionDocument {
     @Id
     private UUID id;
@@ -22,4 +24,12 @@ public class AttractionDocument {
     private GeoJsonPoint location;
     @Field("geohash")
     private String geohash;
+
+    public Double getLatitude() {
+        return this.getLocation().getCoordinates().getFirst();
+    }
+
+    public Double getLongitude() {
+        return this.getLocation().getCoordinates().getLast();
+    }
 }
