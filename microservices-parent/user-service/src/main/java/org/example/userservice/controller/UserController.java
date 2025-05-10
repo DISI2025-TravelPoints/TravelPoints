@@ -1,9 +1,6 @@
 package org.example.userservice.controller;
 
-import org.example.userservice.dto.userdto.PasswordResetDTO;
-import org.example.userservice.dto.userdto.UserLoginDTO;
-import org.example.userservice.dto.userdto.UserRegisterDTO;
-import org.example.userservice.dto.userdto.EmailDTO;
+import org.example.userservice.dto.userdto.*;
 import org.example.userservice.errorhandler.UserException;
 import org.example.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,6 +98,20 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+
+    @GetMapping("/me")
+    public ResponseEntity<LoggedInUserDTO> getCurrentUser(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        String token = authHeader.replace("Bearer ", "");
+        LoggedInUserDTO dto = userService.getLoggedInUser(token);
+        return ResponseEntity.ok(dto);
+    }
+
+
 
 
 }

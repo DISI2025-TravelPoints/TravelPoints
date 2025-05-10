@@ -1,6 +1,7 @@
 package org.example.userservice.service;
 
 import org.example.userservice.builder.userbuilder.UserBuilder;
+import org.example.userservice.dto.userdto.LoggedInUserDTO;
 import org.example.userservice.dto.userdto.UserLoginDTO;
 import org.example.userservice.dto.userdto.UserRegisterDTO;
 import org.example.userservice.entity.Users;
@@ -155,5 +156,17 @@ public class UserService {
         user.setTokenExpiryDate(null);
         userRepository.save(user);
     }
+
+    public LoggedInUserDTO getLoggedInUser(String token) {
+        String email = jwtService.extractEmail(token);
+        Users user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return LoggedInUserDTO.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .build();
+    }
+
 
 }
