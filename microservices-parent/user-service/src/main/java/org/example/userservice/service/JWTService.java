@@ -41,6 +41,7 @@ public class JWTService {
                 .orElseThrow(() -> new RuntimeException("User not found for JWT"));
 
         claims.put("role", user.getRole().name());
+        claims.put("userId", user.getId());
 
         return Jwts.builder()
                 .setClaims(claims)
