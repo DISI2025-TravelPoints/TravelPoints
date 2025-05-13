@@ -43,7 +43,7 @@ def generate_visits(num_visits=100):
     for _ in range(num_visits):
         attraction = random.choice(attractions)
         
-        random_days_ago = random.randint(0,30)
+        random_days_ago = random.randint(0,365)
         
         timestamp = datetime.now() - timedelta(days=random_days_ago)
         

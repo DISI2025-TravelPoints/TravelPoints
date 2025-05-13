@@ -10,6 +10,7 @@ import org.example.attractionservice.mapper.entity.AttractionDocument;
 import org.example.attractionservice.service.AttractionGeoService;
 import org.example.attractionservice.service.AttractionService;
 import org.example.attractionservice.service.S3Service;
+import org.example.attractionservice.service.VisitFrequencyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,7 @@ public class AttractionController {
         FIXME might need fixing
      */
     private final AttractionGeoService attractionGeoService;
+    private final VisitFrequencyService visitFrequencyService;
 
     //OBSOLETE
     @PostMapping("/upload")
@@ -200,6 +202,10 @@ public class AttractionController {
         return ResponseEntity.ok(attractionService.mapAttractionToLocation(nearbyAttractions));
     }
 
+    @GetMapping("/visit-freq")
+    public ResponseEntity<?> getFrequencyOfVisit() {
+        return ResponseEntity.ok(visitFrequencyService.getAllVisits());
+    }
 
 
 
