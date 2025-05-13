@@ -19,6 +19,7 @@
         <module>user-service</module>
         <module>attraction-service</module>
         <module>review-service</module>
+        <module>chat-service</module>
     </modules>
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
