@@ -1,0 +1,6 @@
+Faker==37.1.0
+greenlet==3.2.2
+mysql-connector-python==9.3.0
+SQLAlchemy==2.0.40
+typing_extensions==4.13.2
+tzdata==2025.2
