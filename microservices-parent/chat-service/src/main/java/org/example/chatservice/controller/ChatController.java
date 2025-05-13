@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.chatservice.mapper.dto.UserSyncDTO;
 import org.example.chatservice.service.ChatService;
 import org.example.chatservice.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,8 +17,9 @@ public class ChatController {
     private final ChatService chatService;
     private final UserService userService;
 
-    @PostMapping("/sync")
-    public void syncUsers(@RequestBody UserSyncDTO request){
-        userService.syncUsers(request);
-    }
+        @PostMapping("/sync")
+        public ResponseEntity<?> syncUsers(@RequestBody UserSyncDTO request){
+            userService.syncUsers(request);
+            return ResponseEntity.ok().build();
+        }
 }
