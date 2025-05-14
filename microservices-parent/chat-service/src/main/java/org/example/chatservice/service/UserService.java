@@ -8,6 +8,7 @@ import org.example.chatservice.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -34,5 +35,9 @@ public class UserService {
         if (!usersToDelete.isEmpty()) {
             userRepository.deleteAll(usersToDelete);
         }
+    }
+
+    public Optional<User> findUser(String name, String email) {
+        return userRepository.findByNameAndEmail(name, email);
     }
 }

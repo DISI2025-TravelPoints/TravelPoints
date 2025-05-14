@@ -19,13 +19,8 @@ public class Message {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private UUID id;
-
     @ManyToOne
-    @JoinColumn(name="sender_id", nullable=false)
-    private User senderId;
-    @ManyToOne
-    @JoinColumn(name="recipient_id", nullable=false)
-    private User recipientId;
+    @JoinColumn(name="chat_room", nullable=false)
+    private ChatRoom chatRoom;
     private String content;
-    private Timestamp timestamp;
 }
