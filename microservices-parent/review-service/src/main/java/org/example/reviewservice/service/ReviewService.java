@@ -74,6 +74,7 @@ public class ReviewService {
               .userId(review.getUserId())
               .rating(review.getRating())
               .comment(review.getComment())
+              .createdAt(review.getCreatedAt())
               .build()
       ).toList();
    }

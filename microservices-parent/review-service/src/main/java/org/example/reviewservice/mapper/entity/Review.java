@@ -27,5 +27,7 @@ public class Review {
     @Size(max = 30, message = "Comment must be at most 30 characters")
     private String comment;
 
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
 }
