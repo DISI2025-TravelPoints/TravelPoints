@@ -37,4 +37,12 @@ public class ChatRoomService {
                 .collect(Collectors.toList());
     }
 
+    public Optional<ChatRoom> findChatRoom(UUID roomId) {
+        return chatRoomRepository.findById(roomId);
+    }
+
+    public void allocateAdminToChatRoom(User admin, ChatRoom chatRoom) {
+        chatRoom.setRecipient(admin);
+        chatRoomRepository.save(chatRoom);
+    }
 }

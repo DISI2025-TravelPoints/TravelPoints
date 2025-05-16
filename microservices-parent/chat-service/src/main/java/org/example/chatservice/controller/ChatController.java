@@ -20,6 +20,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -74,5 +75,29 @@ public class ChatController {
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
+    }
+
+    @PostMapping("/join-room/{roomId}")
+    public ResponseEntity<?> joinRoom(@RequestParam String email, @PathVariable UUID roomId) {
+            Optional<ChatRoom> chatRoom = chatRoomService.findChatRoom(roomId);
+
+            if(chatRoom.isPresent()){
+        Optional<User> adminOpt = userService.findUser(email);
+        if (adminOpt.isPresent()) {
+            User admin = adminOpt.get();
+                chatRoomService.allocateAdminToChatRoom(admin, chatRoom.get());
+                return ResponseEntity.ok().build();
+            }
+        }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
+    }
+
+    @GetMapping("/get-room-messages")
+    public ResponseEntity<?> getRoomMessages(@RequestParam UUID roomId) {
+        Optional<ChatRoom> chatRoom = chatRoomService.findChatRoom(roomId);
+        if(chatRoom.isPresent()){
+            return ResponseEntity.ok().body(messageService.getMessagesForChatRoom(chatRoom.get().getId()));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Chat room not found");
     }
 }
