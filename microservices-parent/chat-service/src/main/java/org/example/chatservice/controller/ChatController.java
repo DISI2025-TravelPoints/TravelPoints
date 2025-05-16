@@ -1,37 +1,35 @@
 package org.example.chatservice.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.chatservice.mapper.dto.ChatMesageDTO;
+import org.apache.coyote.Response;
 import org.example.chatservice.mapper.dto.ContactRequestDTO;
 import org.example.chatservice.mapper.dto.UserSyncDTO;
 import org.example.chatservice.mapper.entity.ChatRoom;
 import org.example.chatservice.mapper.entity.User;
+import org.example.chatservice.mapper.entity.UserRole;
 import org.example.chatservice.service.ChatRoomService;
 import org.example.chatservice.service.MessageService;
 import org.example.chatservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-@Controller
-@RequestMapping("/api/chat")
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/chat")
 public class ChatController {
-    @Autowired
     private SimpMessagingTemplate messagingTemplate;
     private final MessageService messageService;
     private final UserService userService;
     private final ChatRoomService chatRoomService;
+
     @PostMapping("/sync")
     public ResponseEntity<?> syncUsers(@RequestBody UserSyncDTO request){
         userService.syncUsers(request);
@@ -56,6 +54,25 @@ public class ChatController {
                 return ResponseEntity.status(HttpStatus.CREATED).body(createdChatRoom.getId());
             }
         }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
+    }
+
+
+
+    @GetMapping("/get-empty-room")
+    public ResponseEntity<?> getEmptyRoom(@RequestParam String email) {
+        Optional<User> adminOpt = userService.findUser(email);
+
+        if (adminOpt.isPresent()) {
+            User admin = adminOpt.get();
+            if (UserRole.Admin.equals(admin.getRole())) {
+                List<ChatRoom> chatRoomList = chatRoomService.getRooms(admin.getId());
+                return ResponseEntity.ok(chatRoomList);
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not an admin");
+            }
+        }
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
     }
 }

@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Data
 @Builder
-public class ChatMesageDTO {
+public class ChatMessageDTO {
     private UUID id;
     private UUID chatRoomId;
     private Long senderId;
