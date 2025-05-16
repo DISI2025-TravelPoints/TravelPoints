@@ -3,6 +3,7 @@ package org.example.chatservice.service;
 import lombok.RequiredArgsConstructor;
 import org.example.chatservice.mapper.entity.ChatRoom;
 import org.example.chatservice.mapper.entity.Message;
+import org.example.chatservice.mapper.entity.User;
 import org.example.chatservice.repository.MessageRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +16,8 @@ import java.util.stream.Collectors;
 public class MessageService {
     private final MessageRepository messageRepository;
 
-    public void addMessage(ChatRoom createdChatRoom, String message) {
-        messageRepository.save(Message.builder().content(message).chatRoom(createdChatRoom).build());
+    public void addMessage(ChatRoom createdChatRoom, User user, String message) {
+        messageRepository.save(Message.builder().content(message).chatRoom(createdChatRoom).sender(user).build());
     }
 
     public List<Message> getMessagesForChatRoom(UUID chatRoomId) {

@@ -16,13 +16,13 @@ import java.util.stream.Collectors;
 public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
 
-    public Optional<ChatRoom> findByUserAndAttraction(User user, UUID attractionId) {
-        return chatRoomRepository.findBySenderAndAttractionId(user, attractionId);
+    public Optional<ChatRoom> findByTouristAndAttraction(User user, UUID attractionId) {
+        return chatRoomRepository.findByTouristAndAttractionId(user, attractionId);
     }
 
     public ChatRoom createRoom(User user, UUID attractionId) {
         ChatRoom chatRoom = new ChatRoom();
-        chatRoom.setSender(user);
+        chatRoom.setTourist(user);
         chatRoom.setAttractionId(attractionId);
         chatRoom.setActive(true);
         return chatRoomRepository.save(chatRoom);
@@ -33,7 +33,7 @@ public class ChatRoomService {
      */
     public List<ChatRoom> getRooms(Long id) {
         return chatRoomRepository.findAll().stream()
-                .filter(room -> room.getRecipient() == null || room.getRecipient().getId().equals(id))
+                .filter(room -> room.getAdmin() == null || room.getAdmin().getId().equals(id))
                 .collect(Collectors.toList());
     }
 
@@ -42,7 +42,7 @@ public class ChatRoomService {
     }
 
     public void allocateAdminToChatRoom(User admin, ChatRoom chatRoom) {
-        chatRoom.setRecipient(admin);
+        chatRoom.setAdmin(admin);
         chatRoomRepository.save(chatRoom);
     }
 }

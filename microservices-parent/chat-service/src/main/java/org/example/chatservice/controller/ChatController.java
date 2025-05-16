@@ -42,16 +42,16 @@ public class ChatController {
         Optional<User> user = userService.findUser(request.getName(), request.getEmail());
         if(user.isPresent()){
             // check if there is already a room created for this user
-            Optional<ChatRoom> chatRoom = chatRoomService.findByUserAndAttraction(user.get(), request.getAttraction());
+            Optional<ChatRoom> chatRoom = chatRoomService.findByTouristAndAttraction(user.get(), request.getAttraction());
             if(chatRoom.isPresent()){
                 // there is already a chat room active
-                messageService.addMessage(chatRoom.get(), request.getMessage());
+                messageService.addMessage(chatRoom.get(),user.get(), request.getMessage());
                 return ResponseEntity.ok().build();
             }
             else{
                 // no chat room present
                 ChatRoom createdChatRoom =  chatRoomService.createRoom(user.get(), request.getAttraction());
-                messageService.addMessage(createdChatRoom, request.getMessage());
+                messageService.addMessage(createdChatRoom,user.get(), request.getMessage());
                 return ResponseEntity.status(HttpStatus.CREATED).body(createdChatRoom.getId());
             }
         }

@@ -10,7 +10,5 @@ import java.util.UUID;
 
 @Repository
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, UUID> {
-    Optional<ChatRoom> findBySender(User sender);
-
-    Optional<ChatRoom> findBySenderAndAttractionId(User sender, UUID attractionId);
+    Optional<ChatRoom> findByTouristAndAttractionId(User tourist, UUID attractionId);
 }

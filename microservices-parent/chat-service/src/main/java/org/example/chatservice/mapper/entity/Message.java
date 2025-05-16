@@ -22,5 +22,8 @@ public class Message {
     @ManyToOne
     @JoinColumn(name="chat_room", nullable=false)
     private ChatRoom chatRoom;
+    @ManyToOne
+    @JoinColumn(name="sender")
+    private User sender;
     private String content;
 }

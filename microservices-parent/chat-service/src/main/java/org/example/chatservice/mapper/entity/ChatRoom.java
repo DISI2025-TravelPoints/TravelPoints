@@ -18,10 +18,10 @@ public class ChatRoom {
     private UUID id;
     @ManyToOne
     @JoinColumn(name="sender", nullable=false)
-    private User sender;
+    private User tourist;
     @ManyToOne
     @JoinColumn(name="recipient") // can be null when first creating a chatroom
-    private User recipient;
+    private User admin;
     private UUID attractionId;
     private Boolean active;
 }
