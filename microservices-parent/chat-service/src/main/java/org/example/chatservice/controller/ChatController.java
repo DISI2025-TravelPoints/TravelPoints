@@ -40,7 +40,7 @@ public class ChatController {
 
     @PostMapping("/create-empty-room")
     public ResponseEntity<?> createEmptyRoom(@RequestBody ContactRequestDTO request){
-        Optional<User> user = userService.findUser(request.getName(), request.getEmail());
+        Optional<User> user = userService.findUser(request.getEmail());
         if(user.isPresent()){
             // check if there is already a room created for this user
             Optional<ChatRoom> chatRoom = chatRoomService.findByTouristAndAttraction(user.get(), request.getAttraction());

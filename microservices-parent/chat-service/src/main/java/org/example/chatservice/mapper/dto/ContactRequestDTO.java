@@ -8,7 +8,6 @@ import java.util.UUID;
 @Data
 @Builder
 public class ContactRequestDTO {
-    private String name;
     private String email;
     private String message;
     private UUID attraction;

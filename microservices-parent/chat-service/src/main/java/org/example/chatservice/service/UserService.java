@@ -37,10 +37,6 @@ public class UserService {
         }
     }
 
-    public Optional<User> findUser(String name, String email) {
-        return userRepository.findByNameAndEmail(name, email);
-    }
-
     public Optional<User> findUser(String email) {
         return userRepository.findByEmail(email);
     }
