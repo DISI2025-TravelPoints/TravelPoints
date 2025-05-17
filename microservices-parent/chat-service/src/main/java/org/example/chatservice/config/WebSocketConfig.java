@@ -12,16 +12,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/topic", "/queue");
+        registry.enableSimpleBroker("/topic", "/user", "/notification");
 
         registry.setApplicationDestinationPrefixes("/app");
 
-        registry.setUserDestinationPrefix("/chat");
+        registry.setUserDestinationPrefix("/user");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/chatws").setAllowedOriginPatterns("*").withSockJS();
     }
-
 }
+

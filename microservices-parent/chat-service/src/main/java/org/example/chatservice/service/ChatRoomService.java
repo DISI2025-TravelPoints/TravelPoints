@@ -28,6 +28,13 @@ public class ChatRoomService {
         return chatRoomRepository.save(chatRoom);
     }
 
+    public List<ChatRoom> getTouristRooms(User tourist){
+        return  chatRoomRepository.findAll()
+                .stream()
+                .filter(room -> room.getTourist().getId() == tourist.getId())
+                .collect(Collectors.toList());
+    }
+
     /*
         Fetches all the empty rooms and the rooms that are allocated to the admin.
      */

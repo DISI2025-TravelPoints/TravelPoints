@@ -11,6 +11,7 @@ import java.util.UUID;
 @Builder
 public class ChatMessageDTO {
     private String content;
-    private UserRole senderRole;
-    private UserRole recipientRole;
+    private String recipientEmail;
+    private String senderEmail;
+    private UUID chatRoomId;
 }

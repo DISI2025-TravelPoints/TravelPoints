@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 public class MessageService {
     private final MessageRepository messageRepository;
 
-    public void addMessage(ChatRoom createdChatRoom, User user, String message) {
-        messageRepository.save(Message.builder().content(message).chatRoom(createdChatRoom).sender(user).build());
+    public Message addMessage(ChatRoom createdChatRoom, User user, String message) {
+        return messageRepository.save(Message.builder().content(message).chatRoom(createdChatRoom).sender(user).build());
     }
 
     public List<Message> getMessagesForChatRoom(UUID chatRoomId) {
