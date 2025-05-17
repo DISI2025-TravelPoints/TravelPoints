@@ -20,7 +20,6 @@ public class MessageService {
         return messageRepository.save(Message.builder().content(message).chatRoom(createdChatRoom).sender(user).build());
     }
 
-    public List<Message> getMessagesForChatRoom(UUID chatRoomId) {
-        return messageRepository.findAll().stream().filter(message -> message.getChatRoom().getId().equals(chatRoomId)).collect(Collectors.toList());
-    }
+    public List<Message> getMessagesForChatRoom(ChatRoom chatRoom) {
+        return messageRepository.findByChatRoomOrderByCreatedAtAsc(chatRoom);    }
 }

@@ -108,7 +108,7 @@ public class ChatController {
     public ResponseEntity<?> getRoomMessages(@RequestParam UUID roomId) {
         Optional<ChatRoom> chatRoom = chatRoomService.findChatRoom(roomId);
         if(chatRoom.isPresent()){
-            return ResponseEntity.ok().body(messageService.getMessagesForChatRoom(chatRoom.get().getId()));
+            return ResponseEntity.ok().body(messageService.getMessagesForChatRoom(chatRoom.get()));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Chat room not found");
     }
