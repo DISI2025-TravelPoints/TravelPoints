@@ -36,7 +36,8 @@ public class SecurityConfig {
                         "/api/user/register",
                         "/api/user/initiate-password-reset",
                         "/api/user/reset-password",
-                        "/api/user/validate-password-reset-token"
+                        "/api/user/validate-password-reset-token",
+                        "/api/chat/sync"
                 ).permitAll()
                 .requestMatchers("/api/admin/**").hasRole("Admin")
                 .requestMatchers("/api/tourist/**").hasRole("Tourist")

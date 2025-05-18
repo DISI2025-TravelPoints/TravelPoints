@@ -61,7 +61,6 @@ public class AttractionController {
             UUID attractionId = attractionService.createAttraction(attractionPostRequest, filename);
             log.info("Saved attraction with id: {}", attractionId);
             attractionGeoService.saveLocation(attractionId, attractionPostRequest.getLatitude(), attractionPostRequest.getLongitude());
-            log.info("merge loggeru 2");
             return ResponseEntity.status(HttpStatus.CREATED).body(attractionId);
         }
         catch(Exception e) {

@@ -1,15 +1,13 @@
 package org.example.userservice.service;
 
 import org.example.userservice.builder.userbuilder.UserBuilder;
-import org.example.userservice.dto.userdto.LoggedInUserDTO;
-import org.example.userservice.dto.userdto.UserLoginDTO;
-import org.example.userservice.dto.userdto.UserRegisterDTO;
+import org.example.userservice.dto.userdto.*;
 import org.example.userservice.entity.Users;
 import org.example.userservice.errorhandler.UserException;
 import org.example.userservice.repository.UserRepository;
 import org.example.userservice.security.TokenBlacklistService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,12 +17,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.UUID;
+import java.util.*;
 
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Service
@@ -166,6 +164,28 @@ public class UserService {
                 .id(user.getId())
                 .email(user.getEmail())
                 .build();
+    }
+
+    public void syncUsers(RestTemplate restTemplate) {
+        Set<UserSyncDTO> users = new HashSet<>();
+        for (Users user : userRepository.findAll()) {
+            users.add(UserSyncDTO.builder()
+            .id(user.getId())
+                            .role(user.getRole())
+                    .name(user.getName())
+                    .email(user.getEmail()).build());
+        }
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        UserSyncRequestDTO userSyncRequestDTO = new UserSyncRequestDTO();
+        userSyncRequestDTO.setUsers(users);
+        HttpEntity<UserSyncRequestDTO> httpEntity = new HttpEntity<>(userSyncRequestDTO, httpHeaders);
+        restTemplate.exchange(
+                "http://localhost/api/chat/sync",
+                HttpMethod.POST,
+                httpEntity,
+                UserSyncRequestDTO.class
+        );
     }
 
 
