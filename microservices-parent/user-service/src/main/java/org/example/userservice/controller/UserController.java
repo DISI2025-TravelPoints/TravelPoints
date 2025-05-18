@@ -1,6 +1,7 @@
 package org.example.userservice.controller;
 
 import org.example.userservice.dto.userdto.*;
+import java.util.List;
 import org.example.userservice.errorhandler.UserException;
 import org.example.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +112,10 @@ public class UserController {
         return ResponseEntity.ok(dto);
     }
 
-
-
+    @PostMapping("/names-by-ids")
+    public ResponseEntity<List<UserDTO>> getUserNamesByIds(@RequestBody List<Long> userIds) {
+        List<UserDTO> users = userService.getUsersByIds(userIds);
+        return ResponseEntity.ok(users);
+    }
 
 }
