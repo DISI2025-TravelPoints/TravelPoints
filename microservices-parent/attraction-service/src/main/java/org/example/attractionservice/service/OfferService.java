@@ -20,7 +20,7 @@ public class OfferService {
             Offer offer = Offer.builder()
                     .title(offerTemplate.getTitle())
                     .description(offerTemplate.getDescription())
-                    .validUntil(offerTemplate.getValidUntil())
+                    .validUntil(offerTemplate.getValidUntil().withHour(23).withMinute(59).withSecond(0).withNano(0))
                     .attractionId(offerTemplate.getAttractionId())
                     .userId(userId)
                     .createdAt(LocalDateTime.now())
@@ -35,10 +35,20 @@ public class OfferService {
         });
     }
 
+//    public List<Offer> getOffersForUser(Long userId) {
+//        List<Offer> offers = offerRepository.findByUserId(userId);
+//        return offers;
+//    }
+
     public List<Offer> getOffersForUser(Long userId) {
-        List<Offer> offers = offerRepository.findByUserId(userId);
-        return offers;
+        LocalDateTime now = LocalDateTime.now();
+        return offerRepository.findByUserId(userId)
+                .stream()
+                .filter(o -> o.getValidUntil() != null && o.getValidUntil().isAfter(now))
+                .toList();
     }
+
+
 }
 
 
