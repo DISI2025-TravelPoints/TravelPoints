@@ -23,12 +23,20 @@ jobs:
       run: docker build -t floareoctavian/attractionservice ./microservices-parent/attraction-service
     - name: Build NGINX Docker Image
       run: docker build -t floareoctavian/travelpoints-nginx ./microservices-parent/nginx
+    - name: Build NGINX Docker Image
+      run: docker build -t floareoctavian/chatservice ./microservices-parent/chat-service
+    - name: Build NGINX Docker Image
+      run: docker build -t floareoctavian/reviewservice ./microservices-parent/review-service
     - name: Push NGINX to DockerHub
       run: docker push floareoctavian/travelpoints-nginx:latest
     - name: Push User Service to DockerHub
       run: docker push floareoctavian/userservice:latest
     - name: Push Attraction Service to DockerHub
       run: docker push floareoctavian/attractionservice:latest
+    - name: Push Chat Service to DockerHub
+      run: docker push floareoctavian/chatservice:latesti
+    - name: Push Review Service to DockerHub
+      run: docker push floareoctavian/reviewservice:latest
 
 
 
