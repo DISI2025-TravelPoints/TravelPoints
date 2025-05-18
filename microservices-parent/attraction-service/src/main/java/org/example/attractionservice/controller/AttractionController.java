@@ -58,7 +58,6 @@ public class AttractionController {
             UUID attractionId = attractionService.createAttraction(attractionPostRequest, filename);
             log.info("Saved attraction with id: {}", attractionId);
             attractionGeoService.saveLocation(attractionId, attractionPostRequest.getLatitude(), attractionPostRequest.getLongitude());
-            log.info("merge loggeru 2");
             return ResponseEntity.status(HttpStatus.CREATED).body(attractionId);
         }
         catch(Exception e) {
@@ -82,8 +81,8 @@ public class AttractionController {
             AttractionDocument location = geoLocationMap.get(attraction.getId());
 
             if(location != null) {
-                attraction.setLongitude(location.getLocation().getCoordinates().get(0));
-                attraction.setLatitude(location.getLocation().getCoordinates().get(1));
+                attraction.setLatitude(location.getLocation().getCoordinates().get(0));
+                attraction.setLongitude(location.getLocation().getCoordinates().get(1));
             }
         });
         return ResponseEntity.ok(attractions);
@@ -160,7 +159,7 @@ public class AttractionController {
 
     @GetMapping("/nearby/{geohash}")
     public List<AttractionGetRequest> getNearbyAttractions(@PathVariable String geohash){
-        List<AttractionDocument> nearbyAttractions = attractionGeoService.getNearbyAttractions(geohash.substring(0, 4));
+        List<AttractionDocument> nearbyAttractions = attractionGeoService.getNearbyAttractions(geohash.substring(0, 5));
 
         Set<UUID> nearbyAttractionIds = nearbyAttractions.stream()
                 .map(AttractionDocument::getId)
