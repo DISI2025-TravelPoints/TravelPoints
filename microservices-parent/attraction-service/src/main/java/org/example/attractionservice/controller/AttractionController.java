@@ -19,10 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -163,9 +160,27 @@ public class AttractionController {
 
     @GetMapping("/nearby/{geohash}")
     public List<AttractionGetRequest> getNearbyAttractions(@PathVariable String geohash){
-        List<AttractionDocument> nearbyAttractions = attractionGeoService.getNearbyAttractions(geohash.substring(0, 5));
-        return attractionService.getAllAttractions().stream()
-                .filter(attraction -> nearbyAttractions.contains(attraction.getId()))
+        List<AttractionDocument> nearbyAttractions = attractionGeoService.getNearbyAttractions(geohash.substring(0, 4));
+
+        Set<UUID> nearbyAttractionIds = nearbyAttractions.stream()
+                .map(AttractionDocument::getId)
+                .collect(Collectors.toSet());
+
+        Map<UUID, AttractionDocument> geoDocMap = nearbyAttractions.stream()
+                .collect(Collectors.toMap(AttractionDocument::getId, Function.identity()));
+
+        List<AttractionGetRequest> attractions = attractionService.findAllById(nearbyAttractionIds);
+
+        return attractions.stream()
+                .map(attraction -> {
+                    AttractionDocument geoDoc = geoDocMap.get(attraction.getId());
+                    if (geoDoc != null) {
+                        attraction.setLatitude(geoDoc.getLatitude());
+                        attraction.setLongitude(geoDoc.getLongitude());
+                    }
+
+                    return attraction;
+                })
                 .collect(Collectors.toList());
     }
 
