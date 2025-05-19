@@ -16,11 +16,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.example.reviewservice.mapper.dto.TopRatedAttractionDTO;
+
+
 
 import java.util.List;
 import java.util.UUID;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 @Service
@@ -30,6 +39,12 @@ public class ReviewService {
    private final ReviewRepository reviewRepository;
 
    private final RestTemplate restTemplate;
+
+   private final StringRedisTemplate redisTemplate;
+
+
+   // Cheie pentru leaderboard
+   private static final String REDIS_LEADERBOARD_KEY = "top_attractions";
 
    private LoggedInUserDTO getLoggedInUser(String token) {
       String url = "http://user-service:8081/api/user/me";
@@ -67,6 +82,7 @@ public class ReviewService {
       review.setComment(dto.getComment());
       review.setUserId(user.getId());
       reviewRepository.save(review);
+      updateLeaderboardInRedis(dto.getAttractionId());
       return "Review successfully saved.";
    }
 
@@ -97,6 +113,8 @@ public class ReviewService {
       review.setComment(dto.getComment());
 
       reviewRepository.save(review);
+      updateLeaderboardInRedis(review.getAttractionId());
+
       return "Review successfully updated.";
    }
    public String deleteReview(UUID reviewId, String token) {
@@ -110,6 +128,8 @@ public class ReviewService {
       }
 
       reviewRepository.deleteById(reviewId);
+      updateLeaderboardInRedis(review.getAttractionId());
+
       return "Review successfully deleted.";
    }
 
@@ -148,13 +168,66 @@ public class ReviewService {
    }
 
 
+   private void updateLeaderboardInRedis(UUID attractionId) {
+      double avgRating = getAverageRatingForAttraction(attractionId);
+      redisTemplate.opsForZSet().add(REDIS_LEADERBOARD_KEY, attractionId.toString(), avgRating);
+   }
 
+   public List<TopRatedAttractionDTO> getTopRatedAttractionsFromRedis() {
+      // 1. Preluăm din Redis
+      Set<ZSetOperations.TypedTuple<String>> redisSet = redisTemplate.opsForZSet()
+              .reverseRangeWithScores(REDIS_LEADERBOARD_KEY, 0, -1);
 
+      Map<UUID, Double> leaderboard = new HashMap<>();
 
+      if (redisSet != null) {
+         for (ZSetOperations.TypedTuple<String> tuple : redisSet) {
+            if (tuple.getValue() != null && tuple.getScore() != null) {
+               leaderboard.put(UUID.fromString(tuple.getValue()), tuple.getScore());
+            }
+         }
+      }
 
+      // 2. Preluăm toate atracțiile cu review-uri din DB
+      List<Review> allReviews = reviewRepository.findAll();
+
+      Map<UUID, List<Review>> grouped = allReviews.stream()
+              .collect(Collectors.groupingBy(Review::getAttractionId));
+
+      // 3. Calculăm media din DB și adăugăm doar atracțiile care NU sunt deja în Redis
+      for (Map.Entry<UUID, List<Review>> entry : grouped.entrySet()) {
+         UUID attractionId = entry.getKey();
+         if (!leaderboard.containsKey(attractionId)) {
+            double avg = entry.getValue().stream().mapToInt(Review::getRating).average().orElse(0.0);
+            leaderboard.put(attractionId, avg);
+         }
+      }
+
+      // 4. Sortăm toate atracțiile după rating
+      return leaderboard.entrySet().stream()
+              .sorted((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()))
+              .limit(10)
+              .map(entry -> {
+                 UUID id = entry.getKey();
+                 double score = entry.getValue();
+                 String name = "Unknown";
+                 try {
+                    ResponseEntity<Map> response = restTemplate.getForEntity(
+                            "http://attraction-service:8082/api/attraction/" + id, Map.class);
+                    name = (String) response.getBody().get("name");
+                 } catch (Exception e) {
+                    System.err.println("Could not fetch name for attraction: " + id);
+                 }
+                 return new TopRatedAttractionDTO(id, name, score);
+              })
+              .collect(Collectors.toList());
+   }
 
 
 
 
 
 }
+
+
+

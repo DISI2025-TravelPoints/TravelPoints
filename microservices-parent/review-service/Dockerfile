@@ -20,6 +20,7 @@ COPY --from=builder /app/target/*.jar review-service.jar
 
 # Expose the application port
 EXPOSE 8080
+EXPOSE 6379
 
 # Command to run the application
 ENTRYPOINT ["java", "-jar", "review-service.jar"]
