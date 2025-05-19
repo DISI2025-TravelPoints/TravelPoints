@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.reviewservice.mapper.dto.LoggedInUserDTO;
 import org.example.reviewservice.mapper.dto.ReviewPostDTO;
 import org.example.reviewservice.mapper.dto.ReviewResponseDTO;
+import org.example.reviewservice.mapper.dto.ReviewAttractionStatsDTO;
 import org.example.reviewservice.mapper.dto.ReviewUpdateDTO;
 import org.example.reviewservice.mapper.entity.Review;
 import org.example.reviewservice.repository.ReviewRepository;
@@ -18,6 +19,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -116,6 +120,31 @@ public class ReviewService {
       }
       double total = reviews.stream().mapToInt(Review::getRating).sum();
       return total / reviews.size();
+   }
+
+   public List<ReviewAttractionStatsDTO> getAttractionStats() {
+      Map<UUID, Long> countMap = reviewRepository.findAll().stream()
+              .collect(Collectors.groupingBy(Review::getAttractionId, Collectors.counting()));
+
+      return countMap.entrySet().stream()
+              .map(entry -> {
+                 UUID attractionId = entry.getKey();
+                 long count = entry.getValue();
+                 String name;
+                 try {
+                    ResponseEntity<Map> response = restTemplate.getForEntity(
+                            "http://attraction-service:8082/api/attraction/" + attractionId,
+                            Map.class
+                    );
+                    name = (String) response.getBody().get("name");
+                 } catch (Exception e) {
+                    name = "Unknown (error fetching name)";
+                    System.err.println("Error fetching attraction name for ID: " + attractionId + ", error: " + e.getMessage());
+                 }
+                 return new ReviewAttractionStatsDTO(attractionId, name, count);
+              })
+              .sorted((a, b) -> Long.compare(b.getReviewCount(), a.getReviewCount()))
+              .toList();
    }
 
 
