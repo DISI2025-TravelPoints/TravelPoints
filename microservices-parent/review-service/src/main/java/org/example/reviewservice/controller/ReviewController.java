@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.reviewservice.mapper.dto.ReviewPostDTO;
 import org.example.reviewservice.mapper.dto.ReviewResponseDTO;
 import org.example.reviewservice.mapper.dto.ReviewUpdateDTO;
+import org.example.reviewservice.mapper.dto.ReviewAttractionStatsDTO;
 import org.example.reviewservice.service.ReviewService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -72,6 +73,11 @@ public class ReviewController {
     public ResponseEntity<Double> getAverageRating(@PathVariable UUID attractionId) {
         double average = reviewService.getAverageRatingForAttraction(attractionId);
         return ResponseEntity.ok(average);
+    }
+
+    @GetMapping("/analytics/visits")
+    public ResponseEntity<List<ReviewAttractionStatsDTO>> getAttractionStats() {
+        return ResponseEntity.ok(reviewService.getAttractionStats());
     }
 
 

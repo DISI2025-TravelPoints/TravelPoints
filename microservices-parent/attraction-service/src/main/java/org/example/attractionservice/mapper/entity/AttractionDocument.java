@@ -26,10 +26,10 @@ public class AttractionDocument {
     private String geohash;
 
     public Double getLatitude() {
-        return this.getLocation().getCoordinates().getFirst();
+        return this.getLocation().getCoordinates().getLast();
     }
 
     public Double getLongitude() {
-        return this.getLocation().getCoordinates().getLast();
+        return this.getLocation().getCoordinates().getFirst();
     }
 }

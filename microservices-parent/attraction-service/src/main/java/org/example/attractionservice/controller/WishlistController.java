@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.example.attractionservice.service.WishlistService;
 import org.example.attractionservice.security.JwtUtil;
+import org.example.attractionservice.mapper.dto.UserDTO;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,4 +41,17 @@ public class WishlistController {
         List<UUID> wishlist = wishlistService.getWishlist(userId);
         return ResponseEntity.ok(wishlist);
     }
+
+
+    @GetMapping("/users-by-attraction/{attractionId}")
+    public ResponseEntity<List<UserDTO>> getUsersByAttraction(
+            @PathVariable UUID attractionId,
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        List<UserDTO> users =
+                wishlistService.getUsersWhoSavedAttraction(attractionId, authHeader);
+        return ResponseEntity.ok(users);
+    }
+
+
 }
