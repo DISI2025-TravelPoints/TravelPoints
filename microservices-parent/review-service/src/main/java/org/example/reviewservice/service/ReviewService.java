@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 @Service
@@ -173,27 +174,55 @@ public class ReviewService {
    }
 
    public List<TopRatedAttractionDTO> getTopRatedAttractionsFromRedis() {
-      Set<ZSetOperations.TypedTuple<String>> topAttractions = redisTemplate.opsForZSet()
-              .reverseRangeWithScores(REDIS_LEADERBOARD_KEY, 0, 9);
+      // 1. Preluăm din Redis
+      Set<ZSetOperations.TypedTuple<String>> redisSet = redisTemplate.opsForZSet()
+              .reverseRangeWithScores(REDIS_LEADERBOARD_KEY, 0, -1);
 
-      if (topAttractions == null || topAttractions.isEmpty()) {
-         return new ArrayList<>();
+      Map<UUID, Double> leaderboard = new HashMap<>();
+
+      if (redisSet != null) {
+         for (ZSetOperations.TypedTuple<String> tuple : redisSet) {
+            if (tuple.getValue() != null && tuple.getScore() != null) {
+               leaderboard.put(UUID.fromString(tuple.getValue()), tuple.getScore());
+            }
+         }
       }
 
-      return topAttractions.stream().map(tuple -> {
-         UUID id = UUID.fromString(tuple.getValue());
-         double score = tuple.getScore();
-         String name = "Unknown";
-         try {
-            ResponseEntity<Map> response = restTemplate.getForEntity(
-                    "http://attraction-service:8082/api/attraction/" + id, Map.class);
-            name = (String) response.getBody().get("name");
-         } catch (Exception e) {
-            System.err.println("Failed to fetch attraction name for: " + id);
+      // 2. Preluăm toate atracțiile cu review-uri din DB
+      List<Review> allReviews = reviewRepository.findAll();
+
+      Map<UUID, List<Review>> grouped = allReviews.stream()
+              .collect(Collectors.groupingBy(Review::getAttractionId));
+
+      // 3. Calculăm media din DB și adăugăm doar atracțiile care NU sunt deja în Redis
+      for (Map.Entry<UUID, List<Review>> entry : grouped.entrySet()) {
+         UUID attractionId = entry.getKey();
+         if (!leaderboard.containsKey(attractionId)) {
+            double avg = entry.getValue().stream().mapToInt(Review::getRating).average().orElse(0.0);
+            leaderboard.put(attractionId, avg);
          }
-         return new TopRatedAttractionDTO(id, name, score);
-      }).collect(Collectors.toList());
+      }
+
+      // 4. Sortăm toate atracțiile după rating
+      return leaderboard.entrySet().stream()
+              .sorted((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()))
+              .limit(10)
+              .map(entry -> {
+                 UUID id = entry.getKey();
+                 double score = entry.getValue();
+                 String name = "Unknown";
+                 try {
+                    ResponseEntity<Map> response = restTemplate.getForEntity(
+                            "http://attraction-service:8082/api/attraction/" + id, Map.class);
+                    name = (String) response.getBody().get("name");
+                 } catch (Exception e) {
+                    System.err.println("Could not fetch name for attraction: " + id);
+                 }
+                 return new TopRatedAttractionDTO(id, name, score);
+              })
+              .collect(Collectors.toList());
    }
+
 
 
 
