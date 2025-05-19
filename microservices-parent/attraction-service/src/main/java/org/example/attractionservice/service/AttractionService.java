@@ -5,15 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.example.attractionservice.mapper.dto.AttractionGetRequest;
 import org.example.attractionservice.mapper.dto.AttractionPostRequest;
 import org.example.attractionservice.mapper.entity.Attraction;
+import org.example.attractionservice.mapper.entity.AttractionDocument;
 import org.example.attractionservice.repository.AttractionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -116,4 +114,11 @@ public class AttractionService {
                 .collect(Collectors.toList());
     }
 
+    public List<AttractionGetRequest> findAllById(Set<UUID> nearbyAttractionIds) {
+        List<Attraction> attractions = attractionRepository.findAllById(nearbyAttractionIds);
+
+        return attractions.stream()
+                .map(this::mapAttractionToRequest)
+                .collect(Collectors.toList());
+    }
 }

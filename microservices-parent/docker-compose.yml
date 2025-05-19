@@ -54,6 +54,25 @@ services:
       SPRING_DATASOURCE_PASSWORD: travelpoints
     env_file:
       - ../.env
+
+  chat-service:
+    container_name: chat-service-container
+    image: chat-service
+    expose:
+      - "80"
+      - "8084"
+    ports:
+      - "8084:8084"
+    networks:
+      - local-travelpoints-network
+    build:
+      context: chat-service
+      dockerfile: ./Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://travelpoints.crk4ggmecmeg.eu-central-1.rds.amazonaws.com:3306/chat_db
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: travelpoints
+
   nginx:
     image: nginx:latest
     container_name: reverse_proxy

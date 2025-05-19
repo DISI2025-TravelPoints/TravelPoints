@@ -7,15 +7,19 @@ import org.example.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
     @Autowired
+    private final RestTemplate restTemplate;
+    @Autowired
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, RestTemplate restTemplate) {
         this.userService = userService;
+        this.restTemplate = restTemplate;
     }
 
 
@@ -29,6 +33,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody UserRegisterDTO userDTO) throws UserException {
         String message = userService.registerUser(userDTO);
+        userService.syncUsers(restTemplate);
         return ResponseEntity.ok(message);
     }
 
