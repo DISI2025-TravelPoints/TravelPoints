@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.reviewservice.mapper.dto.ReviewPostDTO;
 import org.example.reviewservice.mapper.dto.ReviewResponseDTO;
 import org.example.reviewservice.mapper.dto.ReviewUpdateDTO;
+import org.example.reviewservice.mapper.dto.TopRatedAttractionDTO;
 import org.example.reviewservice.mapper.dto.ReviewAttractionStatsDTO;
 import org.example.reviewservice.service.ReviewService;
 import org.springframework.http.ResponseEntity;
@@ -79,6 +80,16 @@ public class ReviewController {
     public ResponseEntity<List<ReviewAttractionStatsDTO>> getAttractionStats() {
         return ResponseEntity.ok(reviewService.getAttractionStats());
     }
+
+    @GetMapping("/analytics/top-redis")
+    public ResponseEntity<List<TopRatedAttractionDTO>> getLeaderboardFromRedis() {
+        return ResponseEntity.ok(reviewService.getTopRatedAttractionsFromRedis());
+    }
+
+
+
+
+
 
 
 
