@@ -1,6 +1,9 @@
 package org.example.userservice.service;
-
 import org.example.userservice.builder.userbuilder.UserBuilder;
+import org.example.userservice.dto.userdto.LoggedInUserDTO;
+import org.example.userservice.dto.userdto.UserLoginDTO;
+import org.example.userservice.dto.userdto.UserRegisterDTO;
+import org.example.userservice.dto.userdto.UserDTO;
 import org.example.userservice.dto.userdto.*;
 import org.example.userservice.entity.Users;
 import org.example.userservice.errorhandler.UserException;
@@ -17,6 +20,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import java.util.stream.Collectors;
+import java.util.List;
+import java.util.UUID;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -186,6 +192,15 @@ public class UserService {
                 httpEntity,
                 UserSyncRequestDTO.class
         );
+    }
+
+    public List<UserDTO> getUsersByIds(List<Long> userIds) {
+        return userRepository.findAllById(userIds).stream()
+                .map(user -> UserDTO.builder()
+                        .id(user.getId())
+                        .name(user.getName())
+                        .build())
+                .collect(Collectors.toList());
     }
 
 
